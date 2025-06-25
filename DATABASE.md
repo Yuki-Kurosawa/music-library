@@ -12,6 +12,7 @@ NN: Not Null<br/>
 UQ: Unique<br/>
 AI: Auto Increment<br/>
 FK: Foreign Key<br/>
+DIC: Dictionary<br/>
 
 ### Category
 
@@ -26,6 +27,7 @@ FK: Foreign Key<br/>
 |-------------|------|-------------|-----------|
 | id          | int  | Platform ID | PK,NN,AI |
 | name        | text | Platform Name | NN,UQ |
+| type        | int | Platform Type | NN,DIC(1: Video, 2: Music, 3: Online Store, 0: Other)  |
 | url         | text | Platform Search Base URL |  |
 
 ### Song
