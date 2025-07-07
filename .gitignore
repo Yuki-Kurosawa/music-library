@@ -37,3 +37,9 @@ yarn-error.*
 *.tsbuildinfo
 
 app-example
+
+[Bb]in
+[Oo]bj
+[Dd]ebug
+[Rr]elease
+[Pp]ublish
