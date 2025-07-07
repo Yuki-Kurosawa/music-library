@@ -20,6 +20,7 @@ DIC: Dictionary<br/>
 |-------------|------|-------------|-----------|
 | id          | int  | Category ID | PK,NN,AI |
 | name        | text | Category Name | NN,UQ |
+| name_english| text | Category Name in English | NN,UQ  |
 
 ### Platform
 
