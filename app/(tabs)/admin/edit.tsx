@@ -5,66 +5,80 @@ import { ActivityIndicator, Alert, Button, Platform, ScrollView, StyleSheet, Tex
 
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
+import { ServiceAPI } from '@/constants/Api';
 import { useThemeColor } from '@/hooks/useThemeColor';
-import { Category, PlatformType, Song } from '@/types/database';
-
-// In a real app, you'd fetch/update this via your API
-const MOCK_SONGS: Song[] = Array.from({ length: 50 }, (_, i) => ({
-  id: i + 1,
-  title: `Song Title ${i + 1}`,
-  artist: `Artist ${i + 1}`,
-  category_id: (i % 8) + 1, // Cycle through categories 1-8
-  add_time: Math.floor(Date.now() / 1000) - i * 3600 * 24, // Songs added over the last 50 days
-  image_url: `https://picsum.photos/seed/${i + 1}/100/100`,
-}));
-
-const MOCK_CATEGORIES: Category[] = [
-  { id: 1, name: 'POPS&アニメ', name_english: 'POPS&ANIME' },
-  { id: 2, name: 'niconico&ボーカロイド', name_english: 'NICONICO&VOCALOID' },
-  { id: 3, name: '東方Project', name_english: 'TOUHOU Project' },
-  { id: 4, name: 'ゲーム＆バラエティ', name_english: 'GAME&VARIETY' },
-  { id: 5, name: 'maimai', name_english: 'maimai' },
-  { id: 6, name: 'オンゲキ', name_english: 'ONGEKI' },
-  { id: 7, name: 'CHUNITHM', name_english: 'CHUNITHM' },
-  { id: 8, name: 'イロドリミドリ', name_english: 'IRODORIMIDORI' },
-];
+import { Category, Platform as PlatformType, Song } from '@/types/database';
 
 const fetchCategories = async (): Promise<Category[]> => {
   console.log('Fetching categories');
-  // Mock API call
-  return new Promise(resolve => setTimeout(() => resolve(MOCK_CATEGORIES), 200));
+  try {
+    const response = await fetch(ServiceAPI.GetCategories());
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching categories:', error);
+    return [];
+  }
 };
 
-const MOCK_PLATFORMS: Platform[] = [
-  { id: 1, name: 'YouTube', type: PlatformType.Video, url: 'https://www.youtube.com/results?search_query=' },
-  { id: 2, name: 'NicoVideo', type: PlatformType.Video, url: 'https://www.nicovideo.jp/search/' },
-  { id: 3, name: 'Bilibili', type: PlatformType.Video, url: 'https://search.bilibili.com/all?keyword=' },
-  { id: 4, name: 'Amazon Music', type: PlatformType.Music, url: 'https://www.amazon.co.jp/s?k=' },
-];
-
-const fetchPlatforms = async (): Promise<Platform[]> => {
+const fetchPlatforms = async (): Promise<PlatformType[]> => {
   console.log('Fetching platforms');
-  // Mock API call
-  return new Promise(resolve => setTimeout(() => resolve(MOCK_PLATFORMS), 200));
+  try {
+    const response = await fetch(ServiceAPI.GetPlatforms());
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching platforms:', error);
+    return [];
+  }
 };
-
 
 const fetchSongDetails = async (id: number): Promise<Song | undefined> => {
   console.log(`Fetching song: ${id}`);
-  // Mock API call
-  return new Promise(resolve => setTimeout(() => resolve(MOCK_SONGS.find(s => s.id === id)), 300));
+  try {
+    const response = await fetch(ServiceAPI.GetSong(id));
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching song details:', error);
+    return undefined;
+  }
 };
 
 const saveSongDetails = async (song: Song): Promise<boolean> => {
   console.log('Saving song:', song);
-  // Mock API call
-  return new Promise(resolve => setTimeout(() => resolve(true), 500));
+  try {
+    const response = await fetch(ServiceAPI.UpdateSong(song.id, song), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(song),
+    });
+    return response.ok;
+  } catch (error) {
+    console.error('Error saving song:', error);
+    return false;
+  }
 };
 
 const deleteSong = async (id: number): Promise<boolean> => {
   console.log('Deleting song:', id);
-  // Mock API call
-  return new Promise(resolve => setTimeout(() => resolve(true), 500));
+  try {
+    const response = await fetch(ServiceAPI.DeleteSong(id), {
+      method: 'POST',
+    });
+    return response.ok;
+  } catch (error) {
+    console.error('Error deleting song:', error);
+    return false;
+  }
 };
 
 export default function EditSongScreen() {
@@ -74,7 +88,7 @@ export default function EditSongScreen() {
 
   const [song, setSong] = useState<Song | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
-  const [platforms, setPlatforms] = useState<Platform[]>([]);
+  const [platforms, setPlatforms] = useState<PlatformType[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);

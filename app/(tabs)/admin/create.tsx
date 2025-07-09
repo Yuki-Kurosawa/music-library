@@ -5,46 +5,71 @@ import { Alert, Button, ScrollView, StyleSheet, TextInput, View } from 'react-na
 
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
+import { ServiceAPI } from '@/constants/Api';
 import { useThemeColor } from '@/hooks/useThemeColor';
-import { Category, Platform, PlatformType, Song } from '@/types/database';
+import { Category, Platform, Song } from '@/types/database';
 
-// In a real app, you'd post this to your API
+// Create song using real API
 const createSong = async (songData: Omit<Song, 'id'>): Promise<boolean> => {
-  console.log('Creating new song:', songData);
-  // Mock API call
-  return new Promise(resolve => setTimeout(() => resolve(true), 500));
+  try {
+    console.log('Creating new song:', songData);
+    const response = await fetch(ServiceAPI.CreateSong(songData), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(songData),
+    });
+    
+    if (response.ok) {
+      return true;
+    } else {
+      console.error('Failed to create song:', response.status, response.statusText);
+      return false;
+    }
+  } catch (error) {
+    console.error('Error creating song:', error);
+    return false;
+  }
 };
 
-const MOCK_CATEGORIES: Category[] = [
-  { id: 1, name: 'POPS&アニメ', name_english: 'POPS&ANIME' },
-  { id: 2, name: 'niconico&ボーカロイド', name_english: 'NICONICO&VOCALOID' },
-  { id: 3, name: '東方Project', name_english: 'TOUHOU Project' },
-  { id: 4, name: 'ゲーム＆バラエティ', name_english: 'GAME&VARIETY' },
-  { id: 5, name: 'maimai', name_english: 'maimai' },
-  { id: 6, name: 'オンゲキ', name_english: 'ONGEKI' },
-  { id: 7, name: 'CHUNITHM', name_english: 'CHUNITHM' },
-  { id: 8, name: 'イロドリミドリ', name_english: 'IRODORIMIDORI' },
-];
-
+// Fetch categories using real API
 const fetchCategories = async (): Promise<Category[]> => {
-  console.log('Fetching categories');
-  // Mock API call
-  return new Promise(resolve => setTimeout(() => resolve(MOCK_CATEGORIES), 200));
+  try {
+    console.log('Fetching categories');
+    const response = await fetch(ServiceAPI.GetCategories());
+    
+    if (response.ok) {
+      const categories = await response.json();
+      return categories;
+    } else {
+      console.error('Failed to fetch categories:', response.status, response.statusText);
+      return [];
+    }
+  } catch (error) {
+    console.error('Error fetching categories:', error);
+    return [];
+  }
 };
 
-const MOCK_PLATFORMS: Platform[] = [
-  { id: 1, name: 'YouTube', type: PlatformType.Video, url: 'https://www.youtube.com/results?search_query=' },
-  { id: 2, name: 'NicoVideo', type: PlatformType.Video, url: 'https://www.nicovideo.jp/search/' },
-  { id: 3, name: 'Bilibili', type: PlatformType.Video, url: 'https://search.bilibili.com/all?keyword=' },
-  { id: 4, name: 'Amazon Music', type: PlatformType.Music, url: 'https://www.amazon.co.jp/s?k=' },
-];
-
+// Fetch platforms using real API
 const fetchPlatforms = async (): Promise<Platform[]> => {
-  console.log('Fetching platforms');
-  // Mock API call
-  return new Promise(resolve => setTimeout(() => resolve(MOCK_PLATFORMS), 200));
+  try {
+    console.log('Fetching platforms');
+    const response = await fetch(ServiceAPI.GetPlatforms());
+    
+    if (response.ok) {
+      const platforms = await response.json();
+      return platforms;
+    } else {
+      console.error('Failed to fetch platforms:', response.status, response.statusText);
+      return [];
+    }
+  } catch (error) {
+    console.error('Error fetching platforms:', error);
+    return [];
+  }
 };
-
 
 export default function CreateSongScreen() {
   const router = useRouter();
@@ -52,12 +77,13 @@ export default function CreateSongScreen() {
   // Use Omit to represent a song that hasn't been saved yet
   const [song, setSong] = useState<Omit<Song, 'id'>>({
     artist: '',
-    category_id: 1, // Default to 'POPS&ANIME'
+    category_id: 1, // Default to first category
     add_time: Math.floor(Date.now() / 1000),
   });
   const [categories, setCategories] = useState<Category[]>([]);
   const [platforms, setPlatforms] = useState<Platform[]>([]);
   const [saving, setSaving] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const textColor = useThemeColor({}, 'text');
   const borderColor = useThemeColor({}, 'icon');
@@ -78,9 +104,39 @@ export default function CreateSongScreen() {
   };
 
   useEffect(() => {
-    fetchCategories().then(setCategories);
-    fetchPlatforms().then(setPlatforms);
+    const loadData = async () => {
+      setLoading(true);
+      try {
+        const [categoriesData, platformsData] = await Promise.all([
+          fetchCategories(),
+          fetchPlatforms()
+        ]);
+        
+        setCategories(categoriesData);
+        setPlatforms(platformsData);
+        
+        // Set default category_id to first available category
+        if (categoriesData.length > 0) {
+          setSong(s => ({ ...s, category_id: categoriesData[0].id }));
+        }
+      } catch (error) {
+        console.error('Error loading data:', error);
+        Alert.alert('Error', 'Failed to load categories and platforms.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadData();
   }, []);
+
+  if (loading) {
+    return (
+      <ThemedView style={styles.container}>
+        <ThemedText>Loading...</ThemedText>
+      </ThemedView>
+    );
+  }
 
   return (
     <ScrollView style={styles.scrollContainer}>
