@@ -1,23 +1,20 @@
 import { Link } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, Button, FlatList, Pressable, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Button, FlatList, Image, Pressable, StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { useThemeColor } from '@/hooks/useThemeColor';
-
-// Mock data structure based on DATABASE.sql
-type Song = {
-  id: number;
-  title: string;
-  artist: string;
-};
+import { Song } from '@/types/database';
 
 // In a real app, you'd fetch this via your API
 const MOCK_SONGS: Song[] = Array.from({ length: 50 }, (_, i) => ({
   id: i + 1,
   title: `Song Title ${i + 1}`,
   artist: `Artist ${i + 1}`,
+  category_id: (i % 8) + 1, // Cycle through categories 1-8
+  add_time: Math.floor(Date.now() / 1000) - i * 3600 * 24, // Songs added over the last 50 days
+  image_url: `https://picsum.photos/seed/${i + 1}/100/100`,
 }));
 
 const PAGE_SIZE = 15;
@@ -56,8 +53,9 @@ export default function AdminScreen() {
   const renderItem = ({ item }: { item: Song }) => (
     <Link href={{ pathname: '/admin/edit', params: { songId: item.id } }} asChild>
       <Pressable style={styles.itemContainer}>
-        <View>
-          <ThemedText type="subtitle">{item.title}</ThemedText>
+        {item.image_url && <Image source={{ uri: item.image_url }} style={styles.thumbnail} />}
+        <View style={styles.songInfo}>
+          <ThemedText type="subtitle">{item.title ?? 'Untitled'}</ThemedText>
           <ThemedText type="default" style={styles.artist}>
             {item.artist}
           </ThemedText>
@@ -118,6 +116,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 15,
     paddingHorizontal: 20,
+  },
+  thumbnail: {
+    width: 50,
+    height: 50,
+    borderRadius: 4,
+    marginRight: 15,
+  },
+  songInfo: {
+    flex: 1,
+    justifyContent: 'center',
   },
   artist: {
     opacity: 0.7,
