@@ -1,4 +1,3 @@
-
 using Microsoft.OpenApi;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Swagger;
@@ -12,6 +11,18 @@ namespace net_api
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+
+            // 添加 CORS 服务
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll",
+                    builder =>
+                    {
+                        builder.AllowAnyOrigin()     // 允许任何来源
+                               .AllowAnyMethod()     // 允许任何 HTTP 方法
+                               .AllowAnyHeader();    // 允许任何头部
+                    });
+            });
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -35,10 +46,12 @@ namespace net_api
                 });
             }
 
+            // 启用 CORS 中间件
+            app.UseCors("AllowAll");
+
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
-
 
             app.MapControllers();
 
