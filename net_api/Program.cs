@@ -10,6 +10,15 @@ namespace net_api
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            // ÅäÖÃKestrel
+            builder.WebHost.ConfigureKestrel(serverOptions =>
+            {
+                serverOptions.ConfigureHttpsDefaults(listenOptions =>
+                {
+                    listenOptions.SslProtocols = System.Security.Authentication.SslProtocols.Tls12 | System.Security.Authentication.SslProtocols.Tls13;
+                });
+            });
+
             // Add services to the container.
 
             // Ìí¼Ó CORS ·þÎñ
