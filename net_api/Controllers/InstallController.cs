@@ -17,7 +17,7 @@ namespace net_api.Controllers
 			database = configuration.GetConnectionString("DefaultConnection");
 		}
 
-		[HttpGet]
+		[HttpGet,Route("Install")]
 		public string Install()
 		{
 			SQLiteConnection con = new SQLiteConnection(database);
@@ -31,7 +31,7 @@ namespace net_api.Controllers
 			return "OK";
 		}
 
-		[HttpGet]
+		[HttpGet,Route("InitDB")]
 		public string InitDB()
 		{
 			SQLiteConnection con = new SQLiteConnection(database);
