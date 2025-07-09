@@ -45,3 +45,8 @@ app-example
 [Pp]ublish
 
 .vs/
+
+*.db
+*.db3
+*.sqlite
+*.sqlite3
