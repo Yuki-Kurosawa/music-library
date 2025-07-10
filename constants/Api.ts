@@ -21,5 +21,6 @@ export const ServiceAPI={
 	GetCategories: () => `${AppConfig.ServerURL}api/categories`,
 	GetPlatforms: () => `${AppConfig.ServerURL}api/platforms`,
 	GetPlatform: (id: number) => `${AppConfig.ServerURL}api/platforms/${id}`,
-	SearchSongs: (type:string, query: string, page: number) => `${AppConfig.ServerURL}api/songs/search?type=${type}&query=${query}&page=${page}`,
+	SearchSongs: (type: string, query: string, page: number) => `${AppConfig.ServerURL}api/songs/search?type=${type}&query=${query}&page=${page}`,
+	GetMetadatas: (platform: number, query: string) => `${AppConfig.ServerURL}api/metadata/search?platform=${platform}&query=${query}`
 };

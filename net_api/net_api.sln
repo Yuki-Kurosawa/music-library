@@ -10,6 +10,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "解决方案项", "解决�
 		..\constants\Api.ts = ..\constants\Api.ts
 		..\DATABASE.md = ..\DATABASE.md
 		..\DATABASE.sql = ..\DATABASE.sql
+		..\types\database.ts = ..\types\database.ts
 		..\INITDB.sql = ..\INITDB.sql
 	EndProjectSection
 EndProject

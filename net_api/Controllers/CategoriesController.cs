@@ -22,7 +22,12 @@ namespace net_api.Controllers
             try
             {
                 using var con = new SQLiteConnection(_database);
-                var categories = con.Query<Category>("SELECT id, name, name_english FROM Category ORDER BY name").ToList();
+                var categories = con.Query("SELECT id, name, name_english FROM Category ORDER BY id asc").Select(q=>
+                new {
+                    id=q.id,
+                    name=q.name,
+                    name_english = q.name_english
+                }).ToList();
                 return Ok(categories);
             }
             catch (Exception ex)

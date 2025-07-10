@@ -49,3 +49,13 @@ export type Song = {
   image_url?: string;
 };
 
+/*
+ * This is use for Metadata searching via API endpoints, no database table needed
+*/
+export type Metadata = {
+    title?: string;
+    artist: string;
+    from_url?: string;
+    image_url?: string;
+}
+
