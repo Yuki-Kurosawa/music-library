@@ -46,8 +46,8 @@ namespace net_api.Controllers
 
             var client = new HttpClient(new HttpClientHandler
             {
-                UseProxy = true,
-                Proxy = new WebProxy("http://127.0.0.1:7890", false),
+                //UseProxy = true,
+                //Proxy = new WebProxy("http://127.0.0.1:7890", false),
                 ServerCertificateCustomValidationCallback = (_,_,_,_) => true,
                 
             });
