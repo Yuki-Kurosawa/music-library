@@ -258,6 +258,102 @@ namespace net_api.Controllers
                 return StatusCode(500, new { error = ex.Message });
             }
         }
+
+        [HttpGet("search")]
+        public IActionResult SearchSongs([FromQuery] string type, [FromQuery] string query, [FromQuery] int page = 1)
+        {
+            try
+            {
+                using var con = new SQLiteConnection(_database);
+                int pageSize = 20;
+                int offset = (page - 1) * pageSize;
+
+                string sql;
+                DynamicParameters parameters = new();
+                parameters.Add("@pageSize", pageSize);
+                parameters.Add("@offset", offset);
+
+                // 如果 type 或 query 为空，执行和 GetSongs 一样的逻辑
+                if (string.IsNullOrWhiteSpace(type) || string.IsNullOrWhiteSpace(query))
+                {
+                    sql = @"
+                SELECT s.id, s.title, s.title_hiragana, s.title_katakana, s.title_romaji, 
+                       s.artist, s.category_id, s.add_time, s.from_platform, s.from_url, s.image_url,
+                       c.name as category_name, c.name_english as category_name_english,
+                       p.name as platform_name, p.type as platform_type, p.url as platform_url
+                FROM Song s
+                LEFT JOIN Category c ON s.category_id = c.id
+                LEFT JOIN Platform p ON s.from_platform = p.id
+                ORDER BY s.add_time DESC
+                LIMIT @pageSize OFFSET @offset";
+                }
+                else
+                {
+                    sql = @"
+                SELECT s.id, s.title, s.title_hiragana, s.title_katakana, s.title_romaji, 
+                       s.artist, s.category_id, s.add_time, s.from_platform, s.from_url, s.image_url,
+                       c.name as category_name, c.name_english as category_name_english,
+                       p.name as platform_name, p.type as platform_type, p.url as platform_url
+                FROM Song s
+                LEFT JOIN Category c ON s.category_id = c.id
+                LEFT JOIN Platform p ON s.from_platform = p.id
+                WHERE 1=1 ";
+                    parameters.Add("@query", $"%{query}%");
+
+                    switch (type.ToLower())
+                    {
+                        case "title":
+                            sql += "AND (s.title LIKE @query OR s.title_hiragana LIKE @query " +
+                                   "OR s.title_katakana LIKE @query OR s.title_romaji LIKE @query)";
+                            break;
+                        case "artist":
+                            sql += "AND s.artist LIKE @query";
+                            break;
+                        case "all":
+                            sql += "AND (s.title LIKE @query OR s.title_hiragana LIKE @query " +
+                                   "OR s.title_katakana LIKE @query OR s.title_romaji LIKE @query " +
+                                   "OR s.artist LIKE @query)";
+                            break;
+                        default:
+                            return BadRequest(new { error = "Invalid search type" });
+                    }
+
+                    sql += " ORDER BY s.add_time DESC LIMIT @pageSize OFFSET @offset";
+                }
+
+                var songs = con.Query(sql, parameters).Select(row => new
+                {
+                    id = row.id,
+                    title = row.title,
+                    title_hiragana = row.title_hiragana,
+                    title_katakana = row.title_katakana,
+                    title_romaji = row.title_romaji,
+                    artist = row.artist,
+                    category_id = row.category_id,
+                    add_time = row.add_time,
+                    from_platform = row.from_platform ?? 0,
+                    from_url = row.from_url,
+                    image_url = row.image_url,
+                    category = new
+                    {
+                        name = row.category_name,
+                        name_english = row.category_name_english
+                    },
+                    platform = row.platform_name == null ? null : new
+                    {
+                        name = row.platform_name,
+                        type = row.platform_type,
+                        url = row.platform_url
+                    }
+                }).ToList();
+
+                return Ok(new { songs, page, pageSize });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = ex.Message });
+            }
+        }
     }
 
     public class CreateSongRequest
