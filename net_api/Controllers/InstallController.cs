@@ -24,7 +24,7 @@ namespace net_api.Controllers
 			con.Open();
 
 			SQLiteCommand cmd = new SQLiteCommand(con);
-			cmd.CommandText = F.ReadAllText("..\\DATABASE.sql", Encoding.UTF8);
+			cmd.CommandText = F.ReadAllText("DATABASE.sql", Encoding.UTF8);
 			cmd.ExecuteNonQuery();
 
 			con.Close();
@@ -38,7 +38,7 @@ namespace net_api.Controllers
 			con.Open();
 
 			SQLiteCommand cmd = new SQLiteCommand(con);
-			cmd.CommandText = F.ReadAllText("..\\INITDB.sql", Encoding.UTF8);
+			cmd.CommandText = F.ReadAllText("INITDB.sql", Encoding.UTF8);
 			cmd.ExecuteNonQuery();
 
 			con.Close();

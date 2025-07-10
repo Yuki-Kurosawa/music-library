@@ -1,3 +1,3 @@
 export const AppConfig = {
-	ServerURL: "https://localhost.ksyuki.com:10443/"
+	ServerURL: "https://u1.ksyuki.com:10443/"
 }
