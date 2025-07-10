@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "music_library",
-    "slug": "music_library",
+    "slug": "music-library",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -37,6 +37,13 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "d430c713-3bd3-47f8-a190-7bc1d307ccbe"
+      }
+    },
+    "owner": "yukikurosawadev"
   }
 }
