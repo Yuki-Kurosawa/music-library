@@ -63,6 +63,8 @@ namespace net_api
 
             app.UseAuthorization();
 
+            app.UseStaticFiles();
+
             app.MapControllers();
 
             app.Run();
