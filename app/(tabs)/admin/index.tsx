@@ -1,5 +1,5 @@
-import { Link } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { Link, useFocusEffect } from 'expo-router';
+import { useCallback, useState } from 'react';
 import { ActivityIndicator, Button, FlatList, Image, Pressable, StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/ThemedText';
@@ -7,6 +7,7 @@ import { ThemedView } from '@/components/ThemedView';
 import { ServiceAPI } from '@/constants/Api';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { Song } from '@/types/database';
+import { Strings } from '@/constants/Strings';
 
 const fetchSongs = async (page: number): Promise<{ data: Song[]; hasMore: boolean }> => {
   console.log(`Fetching page: ${page}`);
@@ -41,32 +42,34 @@ export default function AdminScreen() {
 
   const itemSeparatorColor = useThemeColor({ light: '#eee', dark: '#333' }, 'text');
 
-  useEffect(() => {
-    const loadSongs = async () => {
-      setLoading(true);
-      setError(null);
-      
-      try {
-        const result = await fetchSongs(page);
-        setSongs(result.data);
-        setHasMore(result.hasMore);
-      } catch (err) {
-        setError('Failed to load songs. Please try again.');
-        console.error('Error loading songs:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
+  useFocusEffect(
+    useCallback(() => {
+      const loadSongs = async () => {
+        setLoading(true);
+        setError(null);
+        
+        try {
+          const result = await fetchSongs(page);
+          setSongs(result.data);
+          setHasMore(result.hasMore);
+        } catch (err) {
+          setError(Strings.admin.failedToLoad);
+          console.error('Error loading songs:', err);
+        } finally {
+          setLoading(false);
+        }
+      };
 
-    loadSongs();
-  }, [page]);
+      loadSongs();
+    }, [page])
+  );
 
   const renderItem = ({ item }: { item: Song }) => (
     <Link href={{ pathname: '/admin/edit', params: { songId: item.id } }} asChild>
       <Pressable style={styles.itemContainer}>
         {item.image_url && <Image source={{ uri: item.image_url }} style={styles.thumbnail} />}
         <View style={styles.songInfo}>
-          <ThemedText type="subtitle">{item.title ?? 'Untitled'}</ThemedText>
+          <ThemedText type="subtitle">{item.title ?? Strings.admin.untitled}</ThemedText>
           <ThemedText type="default" style={styles.artist}>
             {item.artist}
           </ThemedText>
@@ -85,7 +88,7 @@ export default function AdminScreen() {
       return (
         <View style={styles.errorContainer}>
           <ThemedText style={styles.errorText}>{error}</ThemedText>
-          <Button title="Retry" onPress={() => setPage(1)} />
+          <Button title={Strings.admin.retry} onPress={() => setPage(1)} />
         </View>
       );
     }
@@ -93,7 +96,7 @@ export default function AdminScreen() {
     if (songs.length === 0) {
       return (
         <View style={styles.emptyContainer}>
-          <ThemedText style={styles.emptyText}>No songs found</ThemedText>
+          <ThemedText style={styles.emptyText}>{Strings.admin.noSongs}</ThemedText>
         </View>
       );
     }
@@ -112,11 +115,11 @@ export default function AdminScreen() {
   return (
     <ThemedView style={styles.container}>
       <ThemedText type="title" style={styles.title}>
-        Manage Songs
+        {Strings.admin.manageSongs}
       </ThemedText>
       <View style={styles.headerActions}>
         <Link href="/admin/create" asChild>
-          <Button title="Create New Song" />
+          <Button title={Strings.admin.createNewSong} />
         </Link>
       </View>
       
@@ -124,13 +127,13 @@ export default function AdminScreen() {
       
       <View style={styles.pagination}>
         <Button 
-          title="Previous" 
+          title={Strings.admin.previous}
           onPress={() => setPage(p => p - 1)} 
           disabled={page === 1 || loading} 
         />
-        <ThemedText style={styles.pageNumber}>Page {page}</ThemedText>
+        <ThemedText style={styles.pageNumber}>{Strings.admin.page} {page}</ThemedText>
         <Button 
-          title="Next" 
+          title={Strings.admin.next}
           onPress={() => setPage(p => p + 1)} 
           disabled={!hasMore || loading} 
         />

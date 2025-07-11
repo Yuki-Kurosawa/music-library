@@ -9,7 +9,7 @@ import { AlertWrap } from '@/components/ui/AlertWrap';
 import { ServiceAPI } from '@/constants/Api';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { Category, Platform, Song } from '@/types/database';
-
+import { Strings } from '@/constants/Strings';
 
 // Create song using real API
 const createSong = async (songData: Omit<Song, 'id'>): Promise<boolean> => {
@@ -92,16 +92,16 @@ export default function CreateSongScreen() {
 
   const handleSave = async () => {
     if (!song.artist) {
-      AlertWrap.alert('Error', 'Please provide an artist name.');
+      AlertWrap.alert(Strings.songForm.error, Strings.songForm.artistPlaceholder);
       return;
     }
     setSaving(true);
     const success = await createSong(song);
     setSaving(false);
     if (success) {
-      AlertWrap.alert('Success', 'Song created successfully.', [{ text: 'OK', onPress: () => router.back() }]);
+      AlertWrap.alert(Strings.songForm.success, Strings.songForm.songCreated, [{ text: Strings.songForm.ok, onPress: () => router.back() }]);
     } else {
-      AlertWrap.alert('Error', 'Failed to create song.');
+      AlertWrap.alert(Strings.songForm.error, Strings.songForm.failedToCreate);
     }
   };
 
@@ -123,7 +123,7 @@ export default function CreateSongScreen() {
         }
       } catch (error) {
         console.error('Error loading data:', error);
-        AlertWrap.alert('Error', 'Failed to load categories and platforms.');
+        AlertWrap.alert(Strings.songForm.error, Strings.songForm.failedToLoad);
       } finally {
         setLoading(false);
       }
@@ -135,7 +135,7 @@ export default function CreateSongScreen() {
   if (loading) {
     return (
       <ThemedView style={styles.container}>
-        <ThemedText>Loading...</ThemedText>
+        <ThemedText>{Strings.songForm.loading}</ThemedText>
       </ThemedView>
     );
   }
@@ -143,47 +143,47 @@ export default function CreateSongScreen() {
   return (
     <ScrollView style={styles.scrollContainer}>
       <ThemedView style={styles.container}>
-        <ThemedText style={styles.label}>Title</ThemedText>
+        <ThemedText style={styles.label}>{Strings.songForm.title}</ThemedText>
         <TextInput
           style={[styles.input, { color: textColor, borderColor }]}
           value={song.title ?? ''}
           onChangeText={text => setSong(s => ({ ...s, title: text || undefined }))}
-          placeholder="Song Title"
+          placeholder={Strings.songForm.songTitlePlaceholder}
         />
 
-        <ThemedText style={styles.label}>Title (Hiragana)</ThemedText>
+        <ThemedText style={styles.label}>{Strings.songForm.titleHiragana}</ThemedText>
         <TextInput
           style={[styles.input, { color: textColor, borderColor }]}
           value={song.title_hiragana ?? ''}
           onChangeText={text => setSong(s => ({ ...s, title_hiragana: text || undefined }))}
-          placeholder="Title in Hiragana"
+          placeholder={Strings.songForm.titleHiraganaPlaceholder}
         />
 
-        <ThemedText style={styles.label}>Title (Katakana)</ThemedText>
+        <ThemedText style={styles.label}>{Strings.songForm.titleKatakana}</ThemedText>
         <TextInput
           style={[styles.input, { color: textColor, borderColor }]}
           value={song.title_katakana ?? ''}
           onChangeText={text => setSong(s => ({ ...s, title_katakana: text || undefined }))}
-          placeholder="Title in Katakana"
+          placeholder={Strings.songForm.titleKatakanaPlaceholder}
         />
 
-        <ThemedText style={styles.label}>Title (Romaji)</ThemedText>
+        <ThemedText style={styles.label}>{Strings.songForm.titleRomaji}</ThemedText>
         <TextInput
           style={[styles.input, { color: textColor, borderColor }]}
           value={song.title_romaji ?? ''}
           onChangeText={text => setSong(s => ({ ...s, title_romaji: text || undefined }))}
-          placeholder="Title in Romaji"
+          placeholder={Strings.songForm.titleRomajiPlaceholder}
         />
 
-        <ThemedText style={styles.label}>Artist</ThemedText>
+        <ThemedText style={styles.label}>{Strings.songForm.artist}</ThemedText>
         <TextInput
           style={[styles.input, { color: textColor, borderColor }]}
           value={song.artist}
           onChangeText={text => setSong(s => ({ ...s, artist: text }))}
-          placeholder="Artist Name"
+          placeholder={Strings.songForm.artistPlaceholder}
         />
 
-        <ThemedText style={styles.label}>Category</ThemedText>
+        <ThemedText style={styles.label}>{Strings.songForm.category}</ThemedText>
         <View style={[styles.pickerContainer, { borderColor }]}>
           <Picker
             selectedValue={song.category_id}
@@ -199,7 +199,7 @@ export default function CreateSongScreen() {
           </Picker>
         </View>
 
-        <ThemedText style={styles.label}>From Platform (Optional)</ThemedText>
+        <ThemedText style={styles.label}>{Strings.songForm.fromPlatform}</ThemedText>
         <View style={[styles.pickerContainer, { borderColor }]}>
           <Picker
             selectedValue={song.from_platform ?? 0}
@@ -209,25 +209,25 @@ export default function CreateSongScreen() {
             style={{ color: textColor }}
             dropdownIconColor={textColor}
           >
-            <Picker.Item label="-- Select a Platform --" value={0} />
+            <Picker.Item label={Strings.songForm.selectPlatform} value={0} />
             {platforms.map(platform => <Picker.Item key={platform.id} label={platform.name} value={platform.id} />)}
           </Picker>
         </View>
 
-        <ThemedText style={styles.label}>From URL</ThemedText>
+        <ThemedText style={styles.label}>{Strings.songForm.fromUrl}</ThemedText>
         <TextInput
           style={[styles.input, { color: textColor, borderColor }]}
           value={song.from_url ?? ''}
           onChangeText={text => setSong(s => ({ ...s, from_url: text || undefined }))}
-          placeholder="Source URL"
+          placeholder={Strings.songForm.sourceUrlPlaceholder}
         />
 
-        <ThemedText style={styles.label}>Image URL</ThemedText>
+        <ThemedText style={styles.label}>{Strings.songForm.imageUrl}</ThemedText>
         <TextInput
           style={[styles.input, { color: textColor, borderColor }]}
           value={song.image_url ?? ''}
           onChangeText={text => setSong(s => ({ ...s, image_url: text || undefined }))}
-          placeholder="Image URL"
+          placeholder={Strings.songForm.imageUrlPlaceholder}
         />
 
         <View style={styles.actionsContainer}>

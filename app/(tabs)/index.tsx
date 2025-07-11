@@ -6,13 +6,11 @@ import { ActivityIndicator, Button, FlatList, Image, Pressable, StyleSheet, Text
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { ServiceAPI } from '@/constants/Api';
+import { Strings } from '@/constants/Strings';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { Song } from '@/types/database';
 
-const SEARCH_TYPES = [
-  { label: '标题', value: 'title' },
-  { label: '歌手', value: 'artist' },
-];
+const SEARCH_TYPES = Strings.home.searchTypes;
 
 const fetchSongs = async (page: number, searchType: string, keyword: string): Promise<{ data: Song[]; hasMore: boolean }> => {
   try {
@@ -55,7 +53,7 @@ export default function AdminScreen() {
         setSongs(result.data);
         setHasMore(result.hasMore);
       } catch (err) {
-        setError('Failed to load songs. Please try again.');
+        setError(Strings.home.failedToLoad);
         console.error('Error loading songs:', err);
       } finally {
         setLoading(false);
@@ -74,7 +72,7 @@ export default function AdminScreen() {
       <Pressable style={styles.itemContainer}>
         {item.image_url && <Image source={{ uri: item.image_url }} style={styles.thumbnail} />}
         <View style={styles.songInfo}>
-          <ThemedText type="subtitle">{item.title ?? 'Untitled'}</ThemedText>
+          <ThemedText type="subtitle">{item.title ?? Strings.home.untitled}</ThemedText>
           <ThemedText type="default" style={styles.artist}>
             {item.artist}
           </ThemedText>
@@ -91,14 +89,14 @@ export default function AdminScreen() {
       return (
         <View style={styles.errorContainer}>
           <ThemedText style={styles.errorText}>{error}</ThemedText>
-          <Button title="Retry" onPress={() => setPage(1)} />
+          <Button title={Strings.home.retry} onPress={() => setPage(1)} />
         </View>
       );
     }
     if (songs.length === 0) {
       return (
         <View style={styles.emptyContainer}>
-          <ThemedText style={styles.emptyText}>No songs found</ThemedText>
+          <ThemedText style={styles.emptyText}>{Strings.home.noSongs}</ThemedText>
         </View>
       );
     }
@@ -116,7 +114,7 @@ export default function AdminScreen() {
   return (
     <ThemedView style={styles.container}>
       <ThemedText type="title" style={styles.title}>
-        Music Library
+        {Strings.home.title}
       </ThemedText>
       {/* 搜索区域 */}
       <View style={styles.searchBar}>
@@ -131,24 +129,24 @@ export default function AdminScreen() {
         </Picker>
         <TextInput
           style={styles.input}
-          placeholder="请输入关键字"
+          placeholder={Strings.home.searchPlaceholder}
           value={inputKeyword}
           onChangeText={setInputKeyword}
           onSubmitEditing={handleSearch}
           returnKeyType="search"
         />
-        <Button title="搜索" onPress={handleSearch} />
+        <Button title={Strings.home.searchButton} onPress={handleSearch} />
       </View>
       {renderContent()}
       <View style={styles.pagination}>
         <Button
-          title="Previous"
+          title={Strings.home.previous}
           onPress={() => setPage(p => p - 1)}
           disabled={page === 1 || loading}
         />
-        <ThemedText style={styles.pageNumber}>Page {page}</ThemedText>
+        <ThemedText style={styles.pageNumber}>{Strings.home.page} {page}</ThemedText>
         <Button
-          title="Next"
+          title={Strings.home.next}
           onPress={() => setPage(p => p + 1)}
           disabled={!hasMore || loading}
         />
