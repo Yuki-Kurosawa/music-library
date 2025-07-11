@@ -1,10 +1,11 @@
 import { Picker } from '@react-native-picker/picker';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, Button, Platform, ScrollView, StyleSheet, TextInput, View } from 'react-native';
+import { ActivityIndicator, Button, Platform, ScrollView, StyleSheet, TextInput, View } from 'react-native';
 
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
+import { AlertWrap } from '@/components/ui/AlertWrap';
 import { ServiceAPI } from '@/constants/Api';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { Category, Platform as PlatformType, Song } from '@/types/database';
@@ -118,16 +119,16 @@ export default function EditSongScreen() {
     const success = await saveSongDetails(song);
     setSaving(false);
     if (success) {
-      Alert.alert('Success', 'Song details saved.', [{ text: 'OK', onPress: () => router.back() }]);
+      AlertWrap.alert('Success', 'Song details saved.', [{ text: 'OK', onPress: () => router.back() }]);
     } else {
-      Alert.alert('Error', 'Failed to save song details.');
+      AlertWrap.alert('Error', 'Failed to save song details.');
     }
   };
 
   const handleDelete = () => {
     if (!song) return;
 
-    Alert.alert(
+    AlertWrap.alert(
       'Delete Song',
       `Are you sure you want to delete "${song.title}"? This action cannot be undone.`,
       [
@@ -142,9 +143,9 @@ export default function EditSongScreen() {
             setDeleting(false);
             if (success) {
               // Use replace to prevent navigating back to the deleted item's page
-              Alert.alert('Success', 'Song deleted successfully.', [{ text: 'OK', onPress: () => router.replace('/admin') }]);
+              AlertWrap.alert('Success', 'Song deleted successfully.', [{ text: 'OK', onPress: () => router.replace('/admin') }]);
             } else {
-              Alert.alert('Error', 'Failed to delete song.');
+              AlertWrap.alert('Error', 'Failed to delete song.');
             }
           },
         },

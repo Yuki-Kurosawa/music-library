@@ -1,7 +1,7 @@
 import { Picker } from '@react-native-picker/picker';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { Alert, Button, ScrollView, StyleSheet, TextInput, View } from 'react-native';
+import { Button, ScrollView, StyleSheet, TextInput, View } from 'react-native';
 
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
@@ -90,16 +90,16 @@ export default function CreateSongScreen() {
 
   const handleSave = async () => {
     if (!song.artist) {
-      Alert.alert('Error', 'Please provide an artist name.');
+      AlertWrap.alert('Error', 'Please provide an artist name.');
       return;
     }
     setSaving(true);
     const success = await createSong(song);
     setSaving(false);
     if (success) {
-      Alert.alert('Success', 'Song created successfully.', [{ text: 'OK', onPress: () => router.back() }]);
+      AlertWrap.alert('Success', 'Song created successfully.', [{ text: 'OK', onPress: () => router.back() }]);
     } else {
-      Alert.alert('Error', 'Failed to create song.');
+      AlertWrap.alert('Error', 'Failed to create song.');
     }
   };
 
@@ -121,7 +121,7 @@ export default function CreateSongScreen() {
         }
       } catch (error) {
         console.error('Error loading data:', error);
-        Alert.alert('Error', 'Failed to load categories and platforms.');
+        AlertWrap.alert('Error', 'Failed to load categories and platforms.');
       } finally {
         setLoading(false);
       }

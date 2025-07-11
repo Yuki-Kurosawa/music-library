@@ -41,6 +41,11 @@ namespace net_api
                 options.SwaggerDoc("v1", new OpenApiInfo { Title = "Music Library API", Version = "v3" });
             });
 
+            builder.Services.AddSpaStaticFiles(options =>
+            {
+                options.RootPath = "wwwroot"; // 设置静态文件根目录
+            });
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -64,6 +69,11 @@ namespace net_api
             app.UseAuthorization();
 
             app.UseStaticFiles();
+
+            app.UseSpa(app=>
+            {
+                app.Options.SourcePath = "wwwroot"; // 设置静态文件根目录
+            });
 
             app.MapControllers();
 
