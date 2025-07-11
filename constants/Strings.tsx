@@ -34,7 +34,8 @@ export const Strings = {
   // (tabs)/admin/_layout.tsx
   adminLayout: {
     editSong: "Edit Song",
-    createSong: "Create Song",
+    createSong: "Create Song",	
+	search:"Search",
   },
   // (tabs)/_layout.tsx
   tab: {

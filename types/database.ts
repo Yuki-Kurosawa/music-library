@@ -55,7 +55,7 @@ export type Song = {
 export type Metadata = {
     title?: string;
     artist: string;
-    from_url?: string;
-    image_url?: string;
+    fromUrl?: string;
+    imageUrl?: string;
 }
 

@@ -1,15 +1,15 @@
-import { Picker } from '@react-native-picker/picker';
-import { useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
-import { Button, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, TextInput, View } from 'react-native';
-
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { AlertWrap } from '@/components/ui/AlertWrap';
 import { ServiceAPI } from '@/constants/Api';
 import { Strings } from '@/constants/Strings';
 import { useThemeColor } from '@/hooks/useThemeColor';
-import { Category, Platforms as PlatformType, Song } from '@/types/database';
+import { Category, Metadata, Platforms as PlatformType, Song } from '@/types/database';
+import { Ionicons } from '@expo/vector-icons';
+import { Picker } from '@react-native-picker/picker';
+import { useRouter } from 'expo-router';
+import { useEffect, useState } from 'react';
+import { Button, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 
 // Create song using real API
 const createSong = async (songData: Omit<Song, 'id'>): Promise<boolean> => {
@@ -132,6 +132,27 @@ export default function CreateSongScreen() {
     loadData();
   }, []);
 
+  useEffect(() => {
+	const handleMetadataSelected = (event: CustomEvent) => {
+		const metadata = event.detail as Metadata;
+		if (metadata && song) {
+			console.log('Metadata selected:', metadata);
+			setSong(prevSong => prevSong ? {
+				...prevSong,
+				from_url: metadata.fromUrl,
+				image_url: metadata.imageUrl,
+			} : null);
+		}
+	};
+  
+	if (typeof window !== 'undefined') {
+		window.addEventListener('metadataSelected', handleMetadataSelected as EventListener);
+		return () => {
+		window.removeEventListener('metadataSelected', handleMetadataSelected as EventListener);
+		};
+	}
+	}, [song]);
+
   if (loading) {
     return (
       <ThemedView style={styles.container}>
@@ -205,19 +226,37 @@ export default function CreateSongScreen() {
           </View>
 
           <ThemedText style={styles.label}>{Strings.songForm.fromPlatform}</ThemedText>
-          <View style={[styles.pickerContainer, { borderColor }]}>
-            <Picker
-              selectedValue={song.from_platform ?? 0}
-              onValueChange={(itemValue) =>
-                setSong(s => ({ ...s, from_platform: itemValue === 0 ? undefined : itemValue }))
-              }
-              style={{ color: textColor }}
-              dropdownIconColor={textColor}
-            >
-              <Picker.Item label={Strings.songForm.selectPlatform} value={0} />
-              {platforms.map(platform => <Picker.Item key={platform.id} label={platform.name} value={platform.id} />)}
-            </Picker>
-          </View>
+            <View style={[styles.pickerRow, { borderColor }]}>
+				<View style={{ flex: 1 }}>
+				<Picker
+					selectedValue={song.from_platform ?? 0}
+					onValueChange={(itemValue) =>
+					setSong(s => (s ? { ...s, from_platform: itemValue === 0 ? undefined : itemValue } : null))
+					}
+					style={{ color: textColor }}
+					dropdownIconColor={textColor}
+				>
+					<Picker.Item label={Strings.songForm.selectPlatform} value={0} />
+					{platforms.map(platform => <Picker.Item key={platform.id} label={platform.name} value={platform.id} />)}
+				</Picker>
+				</View>
+				<TouchableOpacity
+				style={{ marginLeft: 10, justifyContent: 'center' }}
+				onPress={() => {
+					if (song?.from_platform && song.title) {
+					router.push({
+						pathname: './search',
+						params: { platform: song.from_platform, title: song.title }
+					});
+					} else {
+					AlertWrap.alert(Strings.songForm.error, '请先选择平台并填写标题');
+					}
+				}}
+				disabled={!song?.from_platform || !song.title}
+				>
+				<Ionicons name="search" size={24} color={(!song?.from_platform || !song.title) ? '#ccc' : textColor} />
+				</TouchableOpacity>
+			</View>
 
           <ThemedText style={styles.label}>{Strings.songForm.fromUrl}</ThemedText>
           <TextInput
@@ -258,6 +297,14 @@ const styles = StyleSheet.create({
   label: {
     marginBottom: 5,
     fontSize: 16,
+  },  
+  pickerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderRadius: 5,
+    marginBottom: 20,
+    justifyContent: 'center',
   },
   input: {
     borderWidth: 1,
