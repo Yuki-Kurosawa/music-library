@@ -23,7 +23,7 @@ namespace net_api.Controllers
             try
             {
                 using var con = new SQLiteConnection(_database);
-                var platforms = con.Query<Platform>("SELECT id, name, type, url FROM Platform ORDER BY name").ToList();
+                var platforms = con.Query<Platform>("SELECT id, name, type, url FROM Platform ORDER BY id asc").ToList();
                 return Ok(platforms);
             }
             catch (Exception ex)

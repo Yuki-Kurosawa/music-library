@@ -8,15 +8,37 @@ import { ThemedView } from '@/components/ThemedView';
 import { ServiceAPI } from '@/constants/Api';
 import { Strings } from '@/constants/Strings';
 import { useThemeColor } from '@/hooks/useThemeColor';
-import { Song } from '@/types/database';
+import { Category, Song } from '@/types/database';
 
 const SEARCH_TYPES = Strings.home.searchTypes;
 
-const fetchSongs = async (page: number, searchType: string, keyword: string): Promise<{ data: Song[]; hasMore: boolean }> => {
+const fetchCategories = async (): Promise<Category[]> => {
   try {
-    let url = keyword
-      ? ServiceAPI.SearchSongs(searchType, encodeURIComponent(keyword), page)
-      : ServiceAPI.GetSongs(page);
+    const response = await fetch(ServiceAPI.GetCategories());
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching categories:', error);
+    return [];
+  }
+};
+
+const fetchSongs = async (
+  page: number,
+  searchType: string,
+  keyword: string,
+  categoryId: number | null
+): Promise<{ data: Song[]; hasMore: boolean }> => {
+  try {
+    let url =
+      keyword || (categoryId && categoryId > 0)
+        ? ServiceAPI.SearchSongs(
+            searchType,
+            categoryId ?? 0,
+            encodeURIComponent(keyword),
+            page
+          )
+        : ServiceAPI.GetSongs(page);
     const response = await fetch(url);
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
     const result = await response.json();
@@ -41,15 +63,21 @@ export default function AdminScreen() {
   const [searchType, setSearchType] = useState('title');
   const [keyword, setKeyword] = useState('');
   const [inputKeyword, setInputKeyword] = useState('');
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
 
   const itemSeparatorColor = useThemeColor({ light: '#eee', dark: '#333' }, 'text');
+
+  useEffect(() => {
+    fetchCategories().then(setCategories);
+  }, []);
 
   useEffect(() => {
     const loadSongs = async () => {
       setLoading(true);
       setError(null);
       try {
-        const result = await fetchSongs(page, searchType, keyword);
+        const result = await fetchSongs(page, searchType, keyword, selectedCategory);
         setSongs(result.data);
         setHasMore(result.hasMore);
       } catch (err) {
@@ -60,26 +88,34 @@ export default function AdminScreen() {
       }
     };
     loadSongs();
-  }, [page, searchType, keyword]);
+  }, [page, searchType, keyword, selectedCategory]);
 
   const handleSearch = () => {
     setPage(1);
     setKeyword(inputKeyword.trim());
   };
 
-  const renderItem = ({ item }: { item: Song }) => (
-    <Link href="/#" asChild>
-      <Pressable style={styles.itemContainer}>
-        {item.image_url && <Image source={{ uri: item.image_url }} style={styles.thumbnail} />}
-        <View style={styles.songInfo}>
-          <ThemedText type="subtitle">{item.title ?? Strings.home.untitled}</ThemedText>
-          <ThemedText type="default" style={styles.artist}>
-            {item.artist}
-          </ThemedText>
-        </View>
-      </Pressable>
-    </Link>
-  );
+  const renderItem = ({ item }: { item: Song }) => {
+    const category = categories.find(c => c.id === item.category_id);
+    return (
+      <Link href="/#" asChild>
+        <Pressable style={styles.itemContainer}>
+          {item.image_url && <Image source={{ uri: item.image_url }} style={styles.thumbnail} />}
+          <View style={styles.songInfo}>
+            <ThemedText type="subtitle">{item.title ?? Strings.home.untitled}</ThemedText>
+            <ThemedText type="default" style={styles.artist}>
+              {item.artist}
+            </ThemedText>
+            {category && (
+              <ThemedText type="default" style={styles.category}>
+                {category.name}
+              </ThemedText>
+            )}
+          </View>
+        </Pressable>
+      </Link>
+    );
+  };
 
   const renderContent = () => {
     if (loading && page === 1) {
@@ -116,25 +152,41 @@ export default function AdminScreen() {
       <ThemedText type="title" style={styles.title}>
         {Strings.home.title}
       </ThemedText>
-      {/* 搜索区域 */}
-      <View style={styles.searchBar}>
-        <Picker
-          selectedValue={searchType}
-          style={styles.picker}
-          onValueChange={setSearchType}
-        >
-          {SEARCH_TYPES.map(type => (
-            <Picker.Item key={type.value} label={type.label} value={type.value} />
-          ))}
-        </Picker>
-        <TextInput
-          style={styles.input}
-          placeholder={Strings.home.searchPlaceholder}
-          value={inputKeyword}
-          onChangeText={setInputKeyword}
-          onSubmitEditing={handleSearch}
-          returnKeyType="search"
-        />
+      {/* 搜索区域三行 */}
+      <View style={styles.searchBarColumn}>		
+        <View style={styles.searchRow}>
+          <Picker
+            selectedValue={selectedCategory ?? 0}
+            style={styles.picker}
+            onValueChange={value => setSelectedCategory(value === 0 ? null : value)}
+          >
+            <Picker.Item label={Strings.home.allCategories} value={0} />
+            {categories.map(category => (
+              <Picker.Item key={category.id} label={category.name} value={category.id} />
+            ))}
+          </Picker>
+        </View>
+        <View style={styles.searchRow}>
+          <Picker
+            selectedValue={searchType}
+            style={styles.picker}
+            onValueChange={setSearchType}
+          >
+            {SEARCH_TYPES.map(type => (
+              <Picker.Item key={type.value} label={type.label} value={type.value} />
+            ))}
+          </Picker>
+        </View>
+        <View style={styles.searchRow}>
+          <TextInput
+            style={styles.input}
+            placeholder={Strings.home.searchPlaceholder}
+            value={inputKeyword}
+            onChangeText={setInputKeyword}
+            onSubmitEditing={handleSearch}
+            returnKeyType="search"
+          />
+        </View>
         <Button title={Strings.home.searchButton} onPress={handleSearch} />
       </View>
       {renderContent()}
@@ -164,26 +216,28 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 20,
   },
-  searchBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  searchBarColumn: {
+    flexDirection: 'column',
     paddingHorizontal: 10,
     marginBottom: 10,
   },
+  searchRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
   picker: {
-    flex: 0.8,
+    flex: 1,
     height: 40,
-    marginRight: 8,
     backgroundColor: '#fff',
   },
   input: {
-    flex: 2,
+    flex: 1,
     height: 40,
     borderColor: '#ccc',
     borderWidth: 1,
     borderRadius: 6,
     paddingHorizontal: 8,
-    marginRight: 8,
     backgroundColor: '#fff',
   },
   list: {
@@ -209,6 +263,11 @@ const styles = StyleSheet.create({
   artist: {
     opacity: 0.7,
     marginTop: 2,
+  },
+  category: {
+    opacity: 0.6,
+    marginTop: 2,
+    fontSize: 13,
   },
   separator: {
     height: 1,

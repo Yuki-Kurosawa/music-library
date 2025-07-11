@@ -260,7 +260,7 @@ namespace net_api.Controllers
         }
 
         [HttpGet("search")]
-        public IActionResult SearchSongs([FromQuery] string type, [FromQuery] string query, [FromQuery] int page = 1)
+        public IActionResult SearchSongs([FromQuery] string type, [FromQuery] int category, [FromQuery] string query, [FromQuery] int page = 1)
         {
             try
             {
@@ -273,31 +273,26 @@ namespace net_api.Controllers
                 parameters.Add("@pageSize", pageSize);
                 parameters.Add("@offset", offset);
 
-                // 如果 type 或 query 为空，执行和 GetSongs 一样的逻辑
-                if (string.IsNullOrWhiteSpace(type) || string.IsNullOrWhiteSpace(query))
+                sql = @"
+                    SELECT s.id, s.title, s.title_hiragana, s.title_katakana, s.title_romaji, 
+                           s.artist, s.category_id, s.add_time, s.from_platform, s.from_url, s.image_url,
+                           c.name as category_name, c.name_english as category_name_english,
+                           p.name as platform_name, p.type as platform_type, p.url as platform_url
+                    FROM Song s
+                    LEFT JOIN Category c ON s.category_id = c.id
+                    LEFT JOIN Platform p ON s.from_platform = p.id
+                    WHERE 1=1 ";
+
+                // 添加 category 条件
+                if (category != 0)
                 {
-                    sql = @"
-                SELECT s.id, s.title, s.title_hiragana, s.title_katakana, s.title_romaji, 
-                       s.artist, s.category_id, s.add_time, s.from_platform, s.from_url, s.image_url,
-                       c.name as category_name, c.name_english as category_name_english,
-                       p.name as platform_name, p.type as platform_type, p.url as platform_url
-                FROM Song s
-                LEFT JOIN Category c ON s.category_id = c.id
-                LEFT JOIN Platform p ON s.from_platform = p.id
-                ORDER BY s.add_time DESC
-                LIMIT @pageSize OFFSET @offset";
+                    sql += "AND s.category_id = @category_id ";
+                    parameters.Add("@category_id", category);
                 }
-                else
+
+                // 如果 type 和 query 都不为空，添加搜索条件
+                if (!string.IsNullOrWhiteSpace(type) && !string.IsNullOrWhiteSpace(query))
                 {
-                    sql = @"
-                SELECT s.id, s.title, s.title_hiragana, s.title_katakana, s.title_romaji, 
-                       s.artist, s.category_id, s.add_time, s.from_platform, s.from_url, s.image_url,
-                       c.name as category_name, c.name_english as category_name_english,
-                       p.name as platform_name, p.type as platform_type, p.url as platform_url
-                FROM Song s
-                LEFT JOIN Category c ON s.category_id = c.id
-                LEFT JOIN Platform p ON s.from_platform = p.id
-                WHERE 1=1 ";
                     parameters.Add("@query", $"%{query}%");
 
                     switch (type.ToLower())
@@ -317,9 +312,9 @@ namespace net_api.Controllers
                         default:
                             return BadRequest(new { error = "Invalid search type" });
                     }
-
-                    sql += " ORDER BY s.add_time DESC LIMIT @pageSize OFFSET @offset";
                 }
+
+                sql += " ORDER BY s.add_time DESC LIMIT @pageSize OFFSET @offset";
 
                 var songs = con.Query(sql, parameters).Select(row => new
                 {

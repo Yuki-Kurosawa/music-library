@@ -6,6 +6,7 @@ export const Strings = {
     title: "Music Library",
     searchPlaceholder: "请输入关键字",
     searchButton: "搜索",
+	allCategories: "全部分类",
     retry: "Retry",
     noSongs: "No songs found",
     failedToLoad: "Failed to load songs. Please try again.",
