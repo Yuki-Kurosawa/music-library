@@ -228,7 +228,10 @@ const styles = StyleSheet.create({
   },
   picker: {
     flex: 1,
-    height: 40,
+	borderWidth: 2,
+    borderRadius: 5,
+	borderColor: '#ccc',
+    marginBottom: 5,
     backgroundColor: '#fff',
   },
   input: {

@@ -1,15 +1,15 @@
 import { Picker } from '@react-native-picker/picker';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, Button, Platform, ScrollView, StyleSheet, TextInput, View, KeyboardAvoidingView } from 'react-native';
+import { ActivityIndicator, Button, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, TextInput, View } from 'react-native';
 
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { AlertWrap } from '@/components/ui/AlertWrap';
 import { ServiceAPI } from '@/constants/Api';
-import { useThemeColor } from '@/hooks/useThemeColor';
-import { Category, Platform as PlatformType, Song } from '@/types/database';
 import { Strings } from '@/constants/Strings';
+import { useThemeColor } from '@/hooks/useThemeColor';
+import { Category, Platforms as PlatformType, Song } from '@/types/database';
 
 const fetchCategories = async (): Promise<Category[]> => {
   console.log('Fetching categories');
@@ -173,10 +173,10 @@ export default function EditSongScreen() {
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      behavior={Platform.OS === 'ios' ? 'padding' : "height"}
       keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
     >
-      <ScrollView style={styles.scrollContainer} keyboardShouldPersistTaps="handled">
+      <ScrollView style={styles.scrollContainer} keyboardShouldPersistTaps="handled" contentContainerStyle={styles.contentContainer}>
         <ThemedView style={styles.container}>
           <ThemedText style={styles.label}>{Strings.songForm.title}</ThemedText>
           <TextInput
@@ -284,6 +284,9 @@ export default function EditSongScreen() {
 const styles = StyleSheet.create({
   scrollContainer: {
     flex: 1,
+  },
+  contentContainer: {
+	justifyContent:'space-around',
   },
   container: {
     flex: 1,

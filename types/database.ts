@@ -15,7 +15,7 @@ export enum PlatformType {
 /**
  * Corresponds to the `Platform` table in the database.
  */
-export type Platform = {
+export type Platforms = {
   id: number;
   name: string;
   type: PlatformType;

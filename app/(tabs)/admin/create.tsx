@@ -1,15 +1,15 @@
 import { Picker } from '@react-native-picker/picker';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { Button, ScrollView, StyleSheet, TextInput, View, KeyboardAvoidingView, Platform } from 'react-native';
+import { Button, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, TextInput, View } from 'react-native';
 
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { AlertWrap } from '@/components/ui/AlertWrap';
 import { ServiceAPI } from '@/constants/Api';
-import { useThemeColor } from '@/hooks/useThemeColor';
-import { Category, Platform as PlatformType, Song } from '@/types/database';
 import { Strings } from '@/constants/Strings';
+import { useThemeColor } from '@/hooks/useThemeColor';
+import { Category, Platforms as PlatformType, Song } from '@/types/database';
 
 // Create song using real API
 const createSong = async (songData: Omit<Song, 'id'>): Promise<boolean> => {
@@ -55,7 +55,7 @@ const fetchCategories = async (): Promise<Category[]> => {
 };
 
 // Fetch platforms using real API
-const fetchPlatforms = async (): Promise<Platform[]> => {
+const fetchPlatforms = async (): Promise<PlatformType[]> => {
   try {
     console.log('Fetching platforms');
     const response = await fetch(ServiceAPI.GetPlatforms());
@@ -83,7 +83,7 @@ export default function CreateSongScreen() {
     add_time: Math.floor(Date.now() / 1000),
   });
   const [categories, setCategories] = useState<Category[]>([]);
-  const [platforms, setPlatforms] = useState<Platform[]>([]);
+  const [platforms, setPlatforms] = useState<PlatformType[]>([]);
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -146,7 +146,7 @@ export default function CreateSongScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
     >
-      <ScrollView style={styles.scrollContainer} keyboardShouldPersistTaps="handled">
+      <ScrollView style={styles.scrollContainer} keyboardShouldPersistTaps="handled" contentContainerStyle={styles.contentContainer}>
         <ThemedView style={styles.container}>
           <ThemedText style={styles.label}>{Strings.songForm.title}</ThemedText>
           <TextInput
@@ -247,6 +247,9 @@ export default function CreateSongScreen() {
 const styles = StyleSheet.create({
   scrollContainer: {
     flex: 1,
+  },
+  contentContainer: {
+	justifyContent:'space-around',
   },
   container: {
     flex: 1,
