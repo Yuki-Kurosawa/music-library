@@ -83,5 +83,18 @@ export const Strings = {
     deleteConfirmMessage: (title: string) => `Are you sure you want to delete "${title}"? This action cannot be undone.`,
     cancel: "Cancel",
     ok: "OK",
+	noPlatformOrTitle: "Please select a platform and enter a title before searching.",
+  },
+  searchPage:{
+	title: "Search Result",
+	platform: "Platform",
+	platformPlaceholder: "Select a platform",
+	titlePlaceholder: "Enter title to search",
+	searchButton: "Search",
+	untitled: "Untitled",
+	noResults: "No results found.",
+	loading: "Loading...",
+	error: "Error",
+	failedToLoad: "Failed to load metadata. Please try again.",
   }
 };

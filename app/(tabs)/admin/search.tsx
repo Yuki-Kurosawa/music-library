@@ -1,10 +1,11 @@
-import { useEffect, useState } from 'react';
-import { ActivityIndicator, FlatList, TouchableOpacity, View, Text, StyleSheet } from 'react-native';
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import { ServiceAPI } from '@/constants/Api';
-import { Metadata } from '@/types/database';
-import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
+import { ThemedView } from '@/components/ThemedView';
+import { ServiceAPI } from '@/constants/Api';
+import { Strings } from '@/constants/Strings';
+import { Metadata } from '@/types/database';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useEffect, useState } from 'react';
+import { ActivityIndicator, FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export default function SearchScreen() {
   const router = useRouter();
@@ -40,7 +41,7 @@ export default function SearchScreen() {
 
   return (
     <ThemedView style={styles.container}>
-      <ThemedText style={styles.title}>搜索结果</ThemedText>
+      <ThemedText style={styles.title}>{Strings.searchPage.title}</ThemedText>
       {loading && <ActivityIndicator size="large" />}
       {error && <ThemedText style={styles.error}>{error}</ThemedText>}
       {!loading && !error && (
@@ -49,12 +50,20 @@ export default function SearchScreen() {
           keyExtractor={(_, idx) => idx.toString()}
           renderItem={({ item }) => (
             <TouchableOpacity style={styles.item} onPress={() => handleSelect(item)}>
-              <Text style={styles.itemTitle}>{item.title || '无标题'}</Text>
-              <Text style={styles.itemArtist}>{item.artist}</Text>
-              {item.from_url ? <Text style={styles.itemUrl}>{item.from_url}</Text> : null}
+              <View style={styles.itemContainer}>
+                <Image 
+                  source={{ uri: item.imageUrl || '' }}
+                  style={styles.itemImage}
+                  defaultSource={{ uri: '' }}
+                />
+                <View style={styles.itemContent}>
+                  <Text style={styles.itemTitle}>{item.title || Strings.searchPage.untitled}</Text>
+                  <Text style={styles.itemArtist}>{item.artist}</Text>
+                </View>
+              </View>
             </TouchableOpacity>
           )}
-          ListEmptyComponent={<ThemedText>无结果</ThemedText>}
+          ListEmptyComponent={<ThemedText>{Strings.searchPage.noResults}</ThemedText>}
         />
       )}
     </ThemedView>
@@ -65,8 +74,36 @@ const styles = StyleSheet.create({
   container: { flex: 1, padding: 16 },
   title: { fontSize: 20, fontWeight: 'bold', marginBottom: 16 },
   error: { color: 'red', marginBottom: 16 },
-  item: { padding: 12, borderBottomWidth: 1, borderColor: '#eee' },
-  itemTitle: { fontSize: 16, fontWeight: 'bold' },
-  itemArtist: { fontSize: 14, color: '#666' },
-  itemUrl: { fontSize: 12, color: '#888' },
+  item: { 
+    padding: 12, 
+    borderBottomWidth: 1, 
+    borderColor: '#eee' 
+  },
+  itemContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  itemImage: {
+    width: 60,
+    height: 60,
+    borderRadius: 8,
+    marginRight: 12,
+  },
+  itemContent: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  itemTitle: { 
+    fontSize: 16, 
+    fontWeight: 'bold',
+    marginBottom: 4,
+  },
+  itemArtist: { 
+    fontSize: 14, 
+    color: '#666' 
+  },
+  itemUrl: { 
+    fontSize: 12, 
+    color: '#888' 
+  },
 });

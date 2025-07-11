@@ -32,10 +32,13 @@ export const AlertWrap = {
 			else
 			{
 				alert(message);
-				var btn=buttons.find((button)=>button.style !== "cancel");
-				if(btn && btn.onPress)
+				if(buttons && buttons.length > 0) 
 				{
-					btn.onPress();
+					var btn=buttons.find((button)=>button.style !== "cancel");
+					if(btn && btn.onPress)
+					{
+						btn.onPress();
+					}
 				}
 			}
 		}

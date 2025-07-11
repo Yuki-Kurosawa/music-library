@@ -141,7 +141,7 @@ export default function CreateSongScreen() {
 				...prevSong,
 				from_url: metadata.fromUrl,
 				image_url: metadata.imageUrl,
-			} : null);
+			} : prevSong);
 		}
 	};
   
@@ -231,7 +231,7 @@ export default function CreateSongScreen() {
 				<Picker
 					selectedValue={song.from_platform ?? 0}
 					onValueChange={(itemValue) =>
-					setSong(s => (s ? { ...s, from_platform: itemValue === 0 ? undefined : itemValue } : null))
+					setSong(s => (s ? { ...s, from_platform: itemValue === 0 ? undefined : itemValue } : s))
 					}
 					style={{ color: textColor }}
 					dropdownIconColor={textColor}
@@ -249,7 +249,7 @@ export default function CreateSongScreen() {
 						params: { platform: song.from_platform, title: song.title }
 					});
 					} else {
-					AlertWrap.alert(Strings.songForm.error, '请先选择平台并填写标题');
+					AlertWrap.alert(Strings.songForm.error, Strings.songForm.noPlatformOrTitle);
 					}
 				}}
 				disabled={!song?.from_platform || !song.title}

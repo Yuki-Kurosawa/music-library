@@ -279,7 +279,7 @@ export default function EditSongScreen() {
                     params: { platform: song.from_platform, title: song.title }
                   });
                 } else {
-                  AlertWrap.alert(Strings.songForm.error, '请先选择平台并填写标题');
+                  AlertWrap.alert(Strings.songForm.error, Strings.songForm.noPlatformOrTitle);
                 }
               }}
               disabled={!song?.from_platform || !song.title}
