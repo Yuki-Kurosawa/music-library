@@ -1,14 +1,14 @@
 import { Picker } from '@react-native-picker/picker';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { Button, ScrollView, StyleSheet, TextInput, View } from 'react-native';
+import { Button, ScrollView, StyleSheet, TextInput, View, KeyboardAvoidingView, Platform } from 'react-native';
 
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { AlertWrap } from '@/components/ui/AlertWrap';
 import { ServiceAPI } from '@/constants/Api';
 import { useThemeColor } from '@/hooks/useThemeColor';
-import { Category, Platform, Song } from '@/types/database';
+import { Category, Platform as PlatformType, Song } from '@/types/database';
 import { Strings } from '@/constants/Strings';
 
 // Create song using real API
@@ -141,100 +141,106 @@ export default function CreateSongScreen() {
   }
 
   return (
-    <ScrollView style={styles.scrollContainer}>
-      <ThemedView style={styles.container}>
-        <ThemedText style={styles.label}>{Strings.songForm.title}</ThemedText>
-        <TextInput
-          style={[styles.input, { color: textColor, borderColor }]}
-          value={song.title ?? ''}
-          onChangeText={text => setSong(s => ({ ...s, title: text || undefined }))}
-          placeholder={Strings.songForm.songTitlePlaceholder}
-        />
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
+    >
+      <ScrollView style={styles.scrollContainer} keyboardShouldPersistTaps="handled">
+        <ThemedView style={styles.container}>
+          <ThemedText style={styles.label}>{Strings.songForm.title}</ThemedText>
+          <TextInput
+            style={[styles.input, { color: textColor, borderColor }]}
+            value={song.title ?? ''}
+            onChangeText={text => setSong(s => ({ ...s, title: text || undefined }))}
+            placeholder={Strings.songForm.songTitlePlaceholder}
+          />
 
-        <ThemedText style={styles.label}>{Strings.songForm.titleHiragana}</ThemedText>
-        <TextInput
-          style={[styles.input, { color: textColor, borderColor }]}
-          value={song.title_hiragana ?? ''}
-          onChangeText={text => setSong(s => ({ ...s, title_hiragana: text || undefined }))}
-          placeholder={Strings.songForm.titleHiraganaPlaceholder}
-        />
+          <ThemedText style={styles.label}>{Strings.songForm.titleHiragana}</ThemedText>
+          <TextInput
+            style={[styles.input, { color: textColor, borderColor }]}
+            value={song.title_hiragana ?? ''}
+            onChangeText={text => setSong(s => ({ ...s, title_hiragana: text || undefined }))}
+            placeholder={Strings.songForm.titleHiraganaPlaceholder}
+          />
 
-        <ThemedText style={styles.label}>{Strings.songForm.titleKatakana}</ThemedText>
-        <TextInput
-          style={[styles.input, { color: textColor, borderColor }]}
-          value={song.title_katakana ?? ''}
-          onChangeText={text => setSong(s => ({ ...s, title_katakana: text || undefined }))}
-          placeholder={Strings.songForm.titleKatakanaPlaceholder}
-        />
+          <ThemedText style={styles.label}>{Strings.songForm.titleKatakana}</ThemedText>
+          <TextInput
+            style={[styles.input, { color: textColor, borderColor }]}
+            value={song.title_katakana ?? ''}
+            onChangeText={text => setSong(s => ({ ...s, title_katakana: text || undefined }))}
+            placeholder={Strings.songForm.titleKatakanaPlaceholder}
+          />
 
-        <ThemedText style={styles.label}>{Strings.songForm.titleRomaji}</ThemedText>
-        <TextInput
-          style={[styles.input, { color: textColor, borderColor }]}
-          value={song.title_romaji ?? ''}
-          onChangeText={text => setSong(s => ({ ...s, title_romaji: text || undefined }))}
-          placeholder={Strings.songForm.titleRomajiPlaceholder}
-        />
+          <ThemedText style={styles.label}>{Strings.songForm.titleRomaji}</ThemedText>
+          <TextInput
+            style={[styles.input, { color: textColor, borderColor }]}
+            value={song.title_romaji ?? ''}
+            onChangeText={text => setSong(s => ({ ...s, title_romaji: text || undefined }))}
+            placeholder={Strings.songForm.titleRomajiPlaceholder}
+          />
 
-        <ThemedText style={styles.label}>{Strings.songForm.artist}</ThemedText>
-        <TextInput
-          style={[styles.input, { color: textColor, borderColor }]}
-          value={song.artist}
-          onChangeText={text => setSong(s => ({ ...s, artist: text }))}
-          placeholder={Strings.songForm.artistPlaceholder}
-        />
+          <ThemedText style={styles.label}>{Strings.songForm.artist}</ThemedText>
+          <TextInput
+            style={[styles.input, { color: textColor, borderColor }]}
+            value={song.artist}
+            onChangeText={text => setSong(s => ({ ...s, artist: text }))}
+            placeholder={Strings.songForm.artistPlaceholder}
+          />
 
-        <ThemedText style={styles.label}>{Strings.songForm.category}</ThemedText>
-        <View style={[styles.pickerContainer, { borderColor }]}>
-          <Picker
-            selectedValue={song.category_id}
-            onValueChange={(itemValue) =>
-              setSong(s => ({ ...s, category_id: itemValue }))
-            }
-            style={{ color: textColor }}
-            dropdownIconColor={textColor}
-          >
-            {categories.map(category => (
-              <Picker.Item key={category.id} label={`${category.name} (${category.name_english})`} value={category.id} />
-            ))}
-          </Picker>
-        </View>
+          <ThemedText style={styles.label}>{Strings.songForm.category}</ThemedText>
+          <View style={[styles.pickerContainer, { borderColor }]}>
+            <Picker
+              selectedValue={song.category_id}
+              onValueChange={(itemValue) =>
+                setSong(s => ({ ...s, category_id: itemValue }))
+              }
+              style={{ color: textColor }}
+              dropdownIconColor={textColor}
+            >
+              {categories.map(category => (
+                <Picker.Item key={category.id} label={`${category.name} (${category.name_english})`} value={category.id} />
+              ))}
+            </Picker>
+          </View>
 
-        <ThemedText style={styles.label}>{Strings.songForm.fromPlatform}</ThemedText>
-        <View style={[styles.pickerContainer, { borderColor }]}>
-          <Picker
-            selectedValue={song.from_platform ?? 0}
-            onValueChange={(itemValue) =>
-              setSong(s => ({ ...s, from_platform: itemValue === 0 ? undefined : itemValue }))
-            }
-            style={{ color: textColor }}
-            dropdownIconColor={textColor}
-          >
-            <Picker.Item label={Strings.songForm.selectPlatform} value={0} />
-            {platforms.map(platform => <Picker.Item key={platform.id} label={platform.name} value={platform.id} />)}
-          </Picker>
-        </View>
+          <ThemedText style={styles.label}>{Strings.songForm.fromPlatform}</ThemedText>
+          <View style={[styles.pickerContainer, { borderColor }]}>
+            <Picker
+              selectedValue={song.from_platform ?? 0}
+              onValueChange={(itemValue) =>
+                setSong(s => ({ ...s, from_platform: itemValue === 0 ? undefined : itemValue }))
+              }
+              style={{ color: textColor }}
+              dropdownIconColor={textColor}
+            >
+              <Picker.Item label={Strings.songForm.selectPlatform} value={0} />
+              {platforms.map(platform => <Picker.Item key={platform.id} label={platform.name} value={platform.id} />)}
+            </Picker>
+          </View>
 
-        <ThemedText style={styles.label}>{Strings.songForm.fromUrl}</ThemedText>
-        <TextInput
-          style={[styles.input, { color: textColor, borderColor }]}
-          value={song.from_url ?? ''}
-          onChangeText={text => setSong(s => ({ ...s, from_url: text || undefined }))}
-          placeholder={Strings.songForm.sourceUrlPlaceholder}
-        />
+          <ThemedText style={styles.label}>{Strings.songForm.fromUrl}</ThemedText>
+          <TextInput
+            style={[styles.input, { color: textColor, borderColor }]}
+            value={song.from_url ?? ''}
+            onChangeText={text => setSong(s => ({ ...s, from_url: text || undefined }))}
+            placeholder={Strings.songForm.sourceUrlPlaceholder}
+          />
 
-        <ThemedText style={styles.label}>{Strings.songForm.imageUrl}</ThemedText>
-        <TextInput
-          style={[styles.input, { color: textColor, borderColor }]}
-          value={song.image_url ?? ''}
-          onChangeText={text => setSong(s => ({ ...s, image_url: text || undefined }))}
-          placeholder={Strings.songForm.imageUrlPlaceholder}
-        />
+          <ThemedText style={styles.label}>{Strings.songForm.imageUrl}</ThemedText>
+          <TextInput
+            style={[styles.input, { color: textColor, borderColor }]}
+            value={song.image_url ?? ''}
+            onChangeText={text => setSong(s => ({ ...s, image_url: text || undefined }))}
+            placeholder={Strings.songForm.imageUrlPlaceholder}
+          />
 
-        <View style={styles.actionsContainer}>
-          <Button title={saving ? 'Creating...' : 'Create Song'} onPress={handleSave} disabled={saving} />
-        </View>
-      </ThemedView>
-    </ScrollView>
+          <View style={styles.actionsContainer}>
+            <Button title={saving ? Strings.songForm.creating : Strings.songForm.create} onPress={handleSave} disabled={saving} />
+          </View>
+        </ThemedView>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
