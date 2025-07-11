@@ -98,7 +98,7 @@ export default function AdminScreen() {
   const renderItem = ({ item }: { item: Song }) => {
     const category = categories.find(c => c.id === item.category_id);
     return (
-      <Link href="/#" asChild>
+      <Link href={ item.from_url } asChild>
         <Pressable style={styles.itemContainer}>
           {item.image_url && <Image source={{ uri: item.image_url }} style={styles.thumbnail} />}
           <View style={styles.songInfo}>
