@@ -1,7 +1,7 @@
 import { Alert, AlertButton, AlertOptions, Platform } from 'react-native';
 
 export const AlertWrap = {
-	alert: function (title: string, message: string, buttons: AlertButton[], options: AlertOptions	) {
+	alert: function (title: string, message: string, buttons?: AlertButton[], options?: AlertOptions) {
 		if(Platform.OS !== 'web') {
 			Alert.alert(title, message, buttons, options);
 		}
@@ -32,6 +32,11 @@ export const AlertWrap = {
 			else
 			{
 				alert(message);
+				var btn=buttons.find((button)=>button.style !== "cancel");
+				if(btn && btn.onPress)
+				{
+					btn.onPress();
+				}
 			}
 		}
 	}
