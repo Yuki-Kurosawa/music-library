@@ -1,6 +1,7 @@
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { ServiceAPI } from '@/constants/Api';
+import { AppConfig } from '@/constants/Config';
 import { Strings } from '@/constants/Strings';
 import { useMetadata } from '@/contexts/MetadataContext';
 import { Metadata } from '@/types/database';
@@ -50,7 +51,7 @@ export default function SearchScreen() {
 			<TouchableOpacity style={styles.item} onPress={() => handleSelect(item)}>
 			  <View style={styles.itemContainer}>
 				<Image 
-				  source={{ uri: item.imageUrl || '' }}
+				  source={{ uri: ((item.imageUrl??"").indexOf('hdslb.com')>-1?AppConfig.ServerURL+"api/CORS/?url="+encodeURIComponent(item.imageUrl??"") : item.imageUrl) || '' }}
 				  style={styles.itemImage}
 				  defaultSource={{ uri: '' }}
 				/>

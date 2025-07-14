@@ -5,9 +5,10 @@ import { ActivityIndicator, Button, FlatList, Image, Pressable, StyleSheet, View
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { ServiceAPI } from '@/constants/Api';
+import { AppConfig } from '@/constants/Config';
+import { Strings } from '@/constants/Strings';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { Song } from '@/types/database';
-import { Strings } from '@/constants/Strings';
 
 const fetchSongs = async (page: number): Promise<{ data: Song[]; hasMore: boolean }> => {
   console.log(`Fetching page: ${page}`);
@@ -67,7 +68,7 @@ export default function AdminScreen() {
   const renderItem = ({ item }: { item: Song }) => (
     <Link href={{ pathname: '/admin/edit', params: { songId: item.id } }} asChild>
       <Pressable style={styles.itemContainer}>
-        {item.image_url && <Image source={{ uri: item.image_url }} style={styles.thumbnail} />}
+        {item.image_url && <Image source={{ uri: ((item.image_url??"").indexOf('hdslb.com')>-1?AppConfig.ServerURL+"api/CORS/?url="+encodeURIComponent(item.image_url??"") : item.image_url) || '' }} style={styles.thumbnail} />}
         <View style={styles.songInfo}>
           <ThemedText type="subtitle">{item.title ?? Strings.admin.untitled}</ThemedText>
           <ThemedText type="default" style={styles.artist}>
