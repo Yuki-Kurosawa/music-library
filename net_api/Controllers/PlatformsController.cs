@@ -50,7 +50,7 @@ namespace net_api.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpPost,Authorize]
         public IActionResult CreatePlatform([FromBody] CreatePlatformRequest request)
         {
             try
@@ -70,7 +70,7 @@ namespace net_api.Controllers
             }
         }
 
-        [HttpPost("{id}")]
+        [HttpPost("{id}"),Authorize]
         public IActionResult UpdatePlatform(int id, [FromBody] UpdatePlatformRequest request)
         {
             try
@@ -122,7 +122,7 @@ namespace net_api.Controllers
             }
         }
 
-        [HttpPost("delete/{id}")]
+        [HttpPost("delete/{id}"),Authorize]
         public IActionResult DeletePlatform(int id)
         {
             try

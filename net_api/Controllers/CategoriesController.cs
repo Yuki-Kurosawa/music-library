@@ -54,7 +54,7 @@ namespace net_api.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpPost,Authorize]
         public IActionResult CreateCategory([FromBody] CreateCategoryRequest request)
         {
             try
@@ -70,7 +70,7 @@ namespace net_api.Controllers
             }
         }
 
-        [HttpPost("{id}")]
+        [HttpPost("{id}"),Authorize]
         public IActionResult UpdateCategory(int id, [FromBody] UpdateCategoryRequest request)
         {
             try
@@ -113,7 +113,7 @@ namespace net_api.Controllers
             }
         }
 
-        [HttpPost("delete/{id}")]
+        [HttpPost("delete/{id}"),Authorize]
         public IActionResult DeleteCategory(int id)
         {
             try

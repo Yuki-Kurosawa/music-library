@@ -96,5 +96,12 @@ export const Strings = {
 	loading: "Loading...",
 	error: "Error",
 	failedToLoad: "Failed to load metadata. Please try again.",
-  }
+  },
+  api: {
+    error: "Error",
+    failedToLoad: "Failed to load data. Please try again.",
+	authKeyRequired:"Authentication key required.",
+	authKey:"api key",
+	authKeyMessage:"Please enter api key to continute.",
+  },
 };

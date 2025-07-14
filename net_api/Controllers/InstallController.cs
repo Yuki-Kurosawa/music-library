@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Data.SQLite;
 using F = System.IO.File;
 using System.Text;
+using Microsoft.AspNetCore.Authorization;
 
 namespace net_api.Controllers
 {
@@ -17,7 +18,7 @@ namespace net_api.Controllers
 			database = configuration.GetConnectionString("DefaultConnection");
 		}
 
-		[HttpGet,Route("Install")]
+		[HttpGet,Route("Install"),Authorize]
 		public string Install()
 		{
 			SQLiteConnection con = new SQLiteConnection(database);
@@ -31,7 +32,7 @@ namespace net_api.Controllers
 			return "OK";
 		}
 
-		[HttpGet,Route("InitDB")]
+		[HttpGet,Route("InitDB"),Authorize]
 		public string InitDB()
 		{
 			SQLiteConnection con = new SQLiteConnection(database);
@@ -43,6 +44,12 @@ namespace net_api.Controllers
 
 			con.Close();
 			return "OK";
+		}
+
+		[HttpGet,Route("Auth"),Authorize]
+		public string Auth ()
+		{
+			return "DONE";
 		}
     }
 }

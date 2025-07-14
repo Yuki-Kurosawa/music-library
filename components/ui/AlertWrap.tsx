@@ -42,5 +42,30 @@ export const AlertWrap = {
 				}
 			}
 		}
-	}
+	},
+  prompt: function (
+    title: string,
+    message: string,
+    callbackOrButtons?: ((text: string) => void) | AlertButton[],
+    type?: 'plain-text' | 'secure-text' | 'login-password',
+    defaultValue?: string,
+    placeholder?: string
+  ) {
+    if (Platform.OS !== 'web') {
+      // React Native 平台使用 Alert.prompt
+      Alert.prompt(title, message, callbackOrButtons, type, defaultValue, placeholder);
+    } else {
+      // Web 平台使用原生 prompt
+      const text = prompt(`${title}\n${message}`, defaultValue);
+      if (typeof callbackOrButtons === 'function') {
+        callbackOrButtons(text || '');
+      } else if (Array.isArray(callbackOrButtons)) {
+        const btn = callbackOrButtons.find(button => button.style !== 'cancel');
+		if(btn && btn.onPress)
+        {
+			btn.onPress(text || '');
+		}
+      }
+    }
+  }
 }

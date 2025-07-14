@@ -125,7 +125,7 @@ namespace net_api.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpPost,Authorize]
         public IActionResult CreateSong([FromBody] CreateSongRequest request)
         {
             try
@@ -159,7 +159,7 @@ namespace net_api.Controllers
             }
         }
 
-        [HttpPost("{id}")]
+        [HttpPost("{id}"),Authorize]
         public IActionResult UpdateSong(int id, [FromBody] UpdateSongRequest request)
         {
             try
@@ -237,7 +237,7 @@ namespace net_api.Controllers
             }
         }
 
-        [HttpPost("delete/{id}")]
+        [HttpPost("delete/{id}"),Authorize]
         public IActionResult DeleteSong(int id)
         {
             try
@@ -283,14 +283,12 @@ namespace net_api.Controllers
                     LEFT JOIN Platform p ON s.from_platform = p.id
                     WHERE 1=1 ";
 
-                // 添加 category 条件
                 if (category != 0)
                 {
                     sql += "AND s.category_id = @category_id ";
                     parameters.Add("@category_id", category);
                 }
 
-                // 如果 type 和 query 都不为空，添加搜索条件
                 if (!string.IsNullOrWhiteSpace(type) && !string.IsNullOrWhiteSpace(query))
                 {
                     parameters.Add("@query", $"%{query}%");

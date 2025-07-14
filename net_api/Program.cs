@@ -2,6 +2,7 @@ using Microsoft.OpenApi;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Swagger;
 using System.Net;
+using net_api.Security;
 
 namespace net_api
 {
@@ -34,17 +35,46 @@ namespace net_api
                     });
             });
 
+            builder.Services.Configure<ApiAuthenticationOptions>(builder.Configuration.GetSection("ApiKeyConfig"));
+
+
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen((options)=>{
-                options.SwaggerDoc("v1", new OpenApiInfo { Title = "Music Library API", Version = "v3" });
+                options.SwaggerDoc("v1", new OpenApiInfo { Title = "Music Library API", Version = "v3" }); 
+                options.AddSecurityDefinition("Bearer",
+                       new OpenApiSecurityScheme()
+                       {
+                           Description = "API Key or Token",
+                           Name = "Authorization",
+                           In = ParameterLocation.Header,
+                           Type = SecuritySchemeType.ApiKey,
+                           Scheme = "ApiAuth",
+                           BearerFormat = "JWT"
+                       });
+                options.AddSecurityRequirement(new OpenApiSecurityRequirement
+                    {
+                        {
+                            new OpenApiSecurityScheme
+                            {
+                                Reference = new OpenApiReference
+                                {
+                                    Type = ReferenceType.SecurityScheme, Id = "Bearer"
+                                }
+                            },
+                            new List<string>()
+                        }
+                });
             });
 
             builder.Services.AddSpaStaticFiles(options =>
             {
                 options.RootPath = "wwwroot"; // 设置静态文件根目录
             });
+
+            builder.Services.AddAuthentication("ApiAuth")
+                .AddApiAuthentication(options => { });
 
             var app = builder.Build();
 
