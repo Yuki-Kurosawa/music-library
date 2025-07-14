@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Data.SQLite;
 using Dapper;
 using net_api.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace net_api.Controllers
 {
