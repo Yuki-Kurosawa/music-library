@@ -1,7 +1,7 @@
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { AlertWrap } from '@/components/ui/AlertWrap';
-import { ServiceAPI } from '@/constants/Api';
+import { authenticatedApiCall, ServiceAPI } from '@/constants/Api';
 import { Strings } from '@/constants/Strings';
 import { useMetadata } from '@/contexts/MetadataContext';
 import { useThemeColor } from '@/hooks/useThemeColor';
@@ -58,30 +58,31 @@ const fetchSongDetails = async (id: number): Promise<Song | undefined> => {
 const saveSongDetails = async (song: Song): Promise<boolean> => {
   console.log('Saving song:', song);
   try {
-	const response = await fetch(ServiceAPI.UpdateSong(song.id, song), {
-	  method: 'POST',
-	  headers: {
-		'Content-Type': 'application/json',
-	  },
-	  body: JSON.stringify(song),
-	});
-	return response.ok;
+    // 使用 authenticatedApiCall 函数发起请求
+    const response = await authenticatedApiCall<Response>(
+      ServiceAPI.UpdateSong(song.id, song),
+      'POST',
+      song
+    );
+    return true;
   } catch (error) {
-	console.error('Error saving song:', error);
-	return false;
+    console.error('Error saving song:', error);
+    return false;
   }
 };
 
 const deleteSong = async (id: number): Promise<boolean> => {
   console.log('Deleting song:', id);
   try {
-	const response = await fetch(ServiceAPI.DeleteSong(id), {
-	  method: 'POST',
-	});
-	return response.ok;
+    // 使用 authenticatedApiCall 函数发起请求
+    const response = await authenticatedApiCall<Response>(
+      ServiceAPI.DeleteSong(id),
+      'POST'
+    );
+    return true;
   } catch (error) {
-	console.error('Error deleting song:', error);
-	return false;
+    console.error('Error deleting song:', error);
+    return false;
   }
 };
 

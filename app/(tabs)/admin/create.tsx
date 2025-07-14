@@ -1,7 +1,7 @@
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { AlertWrap } from '@/components/ui/AlertWrap';
-import { ServiceAPI } from '@/constants/Api';
+import { authenticatedApiCall, ServiceAPI } from '@/constants/Api';
 import { Strings } from '@/constants/Strings';
 import { useMetadata } from '@/contexts/MetadataContext';
 import { useThemeColor } from '@/hooks/useThemeColor';
@@ -16,24 +16,17 @@ import { Button, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, TextInp
 // Create song using real API
 const createSong = async (songData: Omit<Song, 'id'>): Promise<boolean> => {
   try {
-	console.log('Creating new song:', songData);
-	const response = await fetch(ServiceAPI.CreateSong(songData), {
-	  method: 'POST',
-	  headers: {
-		'Content-Type': 'application/json',
-	  },
-	  body: JSON.stringify(songData),
-	});
-	
-	if (response.ok) {
-	  return true;
-	} else {
-	  console.error('Failed to create song:', response.status, response.statusText);
-	  return false;
-	}
+    console.log('Creating new song:', songData);
+    // 使用 authenticatedApiCall 函数发起请求
+    const response = await authenticatedApiCall<Response>(
+      ServiceAPI.CreateSong(songData),
+      'POST',
+      songData
+    );
+    return true;
   } catch (error) {
-	console.error('Error creating song:', error);
-	return false;
+    console.error('Error creating song:', error);
+    return false;
   }
 };
 
