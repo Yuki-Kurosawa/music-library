@@ -5,8 +5,7 @@ import { ActivityIndicator, Button, FlatList, Image, Pressable, StyleSheet, Text
 
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
-import { ServiceAPI } from '@/constants/Api';
-import { AppConfig } from '@/constants/Config';
+import { ImageURLMap, ServiceAPI } from '@/constants/Api';
 import { Strings } from '@/constants/Strings';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { Category, Song } from '@/types/database';
@@ -101,7 +100,7 @@ export default function AdminScreen() {
     return (
       <Link href={ item.from_url } asChild>
         <Pressable style={styles.itemContainer}>
-          {item.image_url && <Image source={{ uri: ((item.image_url??"").indexOf('hdslb.com')>-1?AppConfig.ServerURL+"api/CORS/?url="+encodeURIComponent(item.image_url??"") : item.image_url) || '' }} style={styles.thumbnail} />}
+          {item.image_url && <Image source={{ uri: ImageURLMap(item.image_url) }} style={styles.thumbnail} />}
           <View style={styles.songInfo}>
             <ThemedText type="subtitle">{item.title ?? Strings.home.untitled}</ThemedText>
             <ThemedText type="default" style={styles.artist}>

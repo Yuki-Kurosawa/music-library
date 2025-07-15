@@ -84,3 +84,14 @@ export const authenticatedApiCall = async <T>(
 };
 
 /* API Fetch Wrapper with authentication */
+
+export const ImageURLMap = (url: string | null | undefined): string => {
+  
+  const safeUrl = url ?? '';
+  
+  if (safeUrl.includes('hdslb.com')) {
+    return `${AppConfig.ServerURL}api/CORS/?url=${encodeURIComponent(safeUrl)}`;
+  }
+  
+  return safeUrl;
+};
