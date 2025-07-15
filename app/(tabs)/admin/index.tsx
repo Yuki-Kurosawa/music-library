@@ -193,9 +193,9 @@ export default function AdminScreen() {
         </View>
         {/* 新容器，将搜索按钮和新建按钮放在同一行 */}
         <View style={styles.buttonRow}>
-          <Button title={Strings.admin.searchButton} onPress={handleSearch} style={styles.button} />
+          <Button title={Strings.admin.searchButton} onPress={handleSearch}  />
           <Link href="/admin/create" asChild>
-            <Button title={Strings.admin.createNewSong} style={styles.button} />
+            <Button title={Strings.admin.createNewSong} />
           </Link>
         </View>
       </View>
