@@ -233,7 +233,7 @@ const styles = StyleSheet.create({
     paddingTop: 50, // Adjust for status bar
   },
   title: {
-    textAlign: 'center',
+    textAlign: 'left',
     marginBottom: 20,
   },
   headerActions: {

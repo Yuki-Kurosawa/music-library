@@ -213,7 +213,7 @@ const styles = StyleSheet.create({
     paddingTop: 50,
   },
   title: {
-    textAlign: 'center',
+    textAlign: 'left',
     marginBottom: 20,
   },
   searchBarColumn: {
