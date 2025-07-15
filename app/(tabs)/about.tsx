@@ -1,4 +1,5 @@
-import { StyleSheet, ScrollView } from 'react-native';
+import { Link } from 'expo-router';
+import { ScrollView, StyleSheet } from 'react-native';
 
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
@@ -7,30 +8,17 @@ export default function AboutScreen() {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <ThemedView style={styles.section}>
-        <ThemedText type="title">Music Library</ThemedText>
-        <ThemedText type="subtitle" style={styles.version}>Version 1.0.0</ThemedText>
-      </ThemedView>
-      
-      <ThemedView style={styles.section}>
-        <ThemedText type="subtitle">About</ThemedText>
-        <ThemedText style={styles.description}>
-          A modern music library app built with React Native and Expo. 
-          Manage your music collection, create playlists, and discover new music.
-        </ThemedText>
-      </ThemedView>
+        <ThemedText type="subtitle">音楽ライブラリ</ThemedText>
+        <ThemedText type="subtitle" style={styles.version}>バージョン 1.0.0</ThemedText>
+      </ThemedView>    
 
       <ThemedView style={styles.section}>
-        <ThemedText type="subtitle">Features</ThemedText>
-        <ThemedText style={styles.feature}>• Browse and organize your music</ThemedText>
-        <ThemedText style={styles.feature}>• Create custom playlists</ThemedText>
-        <ThemedText style={styles.feature}>• Admin panel for music management</ThemedText>
-        <ThemedText style={styles.feature}>• Cross-platform support</ThemedText>
-      </ThemedView>
-
-      <ThemedView style={styles.section}>
-        <ThemedText type="subtitle">Developer</ThemedText>
-        <ThemedText>Built with React Native & Expo</ThemedText>
-        <ThemedText>Backend powered by .NET 8.0</ThemedText>
+		<ThemedText type="subtitle">開発チーム：</ThemedText>
+		<ThemedText>黒澤　ゆき <Link href="https://x.com/YukiKurosawaDev">@YukiKurosawaDev</Link></ThemedText>
+		<ThemedText>佐々木　佑奈 <Link href="https://x.com/YukiKurosawaDev">@YuunaSasakiDev</Link></ThemedText>
+		<ThemedText>一ノ瀬　百合 <Link href="https://x.com/YukiKurosawaDev">@YuriIchinoseDev</Link></ThemedText>
+		<ThemedText>一ノ瀬　佑芽 <Link href="https://x.com/YukiKurosawaDev">@YumeIchinoseDev</Link></ThemedText>
+        <ThemedText>&copy; Copyright 2025 All rights Reserved</ThemedText>
       </ThemedView>
     </ScrollView>
   );
