@@ -1,48 +1,33 @@
 // 所有页面可视化字符串集中管理
 
+// 公共字符串
+const commonStrings = {
+  previous: "Previous",
+  next: "Next",
+  page: "Page",
+  untitled: "Untitled",
+  retry: "Retry",
+  noSongs: "No songs found",
+  failedToLoad: "Failed to load songs. Please try again.",
+  searchTypes: [
+    { label: "标题", value: "title" },
+    { label: "歌手", value: "artist" },
+  ],
+  searchPlaceholder: "请输入关键字",
+  searchButton: "搜索",
+  allCategories: "全部分类",
+};
+
 export const Strings = {
   // (tabs)/index.tsx
   home: {
-    title: "Music Library",
-    searchPlaceholder: "请输入关键字",
-    searchButton: "搜索",
-	allCategories: "全部分类",
-    retry: "Retry",
-    noSongs: "No songs found",
-    failedToLoad: "Failed to load songs. Please try again.",
-    previous: "Previous",
-    next: "Next",
-    page: "Page",
-    untitled: "Untitled",
-    searchTypes: [
-      { label: "标题", value: "title" },
-      { label: "歌手", value: "artist" },
-    ],
+    pageTitle: "Music Library",
+    ...commonStrings,
   },
-  // (tabs)/admin/index.tsx
-  admin: {
-    manageSongs: "Manage Songs",
-    createNewSong: "Create New Song",
-    retry: "Retry",
-    noSongs: "No songs found",
-    failedToLoad: "Failed to load songs. Please try again.",
-    previous: "Previous",
-    next: "Next",
-    page: "Page",
-    untitled: "Untitled",
-	searchTypes: [
-      { label: "标题", value: "title" },
-      { label: "歌手", value: "artist" },
-    ],
-	searchPlaceholder: "请输入关键字",
-    searchButton: "搜索",
-	allCategories: "全部分类",
-  },
-  // (tabs)/admin/_layout.tsx
   adminLayout: {
     editSong: "Edit Song",
     createSong: "Create Song",	
-	search:"Search",
+    search: "Search",
   },
   // (tabs)/_layout.tsx
   tab: {
@@ -90,25 +75,27 @@ export const Strings = {
     deleteConfirmMessage: (title: string) => `Are you sure you want to delete "${title}"? This action cannot be undone.`,
     cancel: "Cancel",
     ok: "OK",
-	noPlatformOrTitle: "Please select a platform and enter a title before searching.",
+    noPlatformOrTitle: "Please select a platform and enter a title before searching.",
   },
-  searchPage:{
-	title: "Search Result",
-	platform: "Platform",
-	platformPlaceholder: "Select a platform",
-	titlePlaceholder: "Enter title to search",
-	searchButton: "Search",
-	untitled: "Untitled",
-	noResults: "No results found.",
-	loading: "Loading...",
-	error: "Error",
-	failedToLoad: "Failed to load metadata. Please try again.",
+  searchPage: {
+    title: "Search Result",
+    platform: "Platform",
+    platformPlaceholder: "Select a platform",
+    titlePlaceholder: "Enter title to search",
+    ...commonStrings,
   },
   api: {
     error: "Error",
     failedToLoad: "Failed to load data. Please try again.",
-	authKeyRequired:"Authentication key required.",
-	authKey:"api key",
-	authKeyMessage:"Please enter api key to continute.",
+    authKeyRequired: "Authentication key required.",
+    authKey: "api key",
+    authKeyMessage: "Please enter api key to continute.",
   },
+  // (tabs)/admin/index.tsx
+  admin: {
+    pageTitle: "Manage Songs",
+    createNewSong: "Create New Song",
+    ...commonStrings,
+  },
+  // (tabs)/admin/_layout.tsx
 };

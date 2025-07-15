@@ -150,7 +150,7 @@ export default function AdminScreen() {
   return (
     <ThemedView style={styles.container}>
       <ThemedText type="title" style={styles.title}>
-        {Strings.home.title}
+        {Strings.home.pageTitle}
       </ThemedText>
       {/* 搜索区域三行 */}
       <View style={styles.searchBarColumn}>		

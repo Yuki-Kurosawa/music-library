@@ -154,7 +154,7 @@ export default function AdminScreen() {
   return (
     <ThemedView style={styles.container}>
       <ThemedText type="title" style={styles.title}>
-        {Strings.admin.manageSongs}
+        {Strings.admin.pageTitle}
       </ThemedText>
       {/* 搜索区域 */}
       <View style={styles.searchBarColumn}>
