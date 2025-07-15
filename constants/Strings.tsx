@@ -30,6 +30,13 @@ export const Strings = {
     next: "Next",
     page: "Page",
     untitled: "Untitled",
+	searchTypes: [
+      { label: "标题", value: "title" },
+      { label: "歌手", value: "artist" },
+    ],
+	searchPlaceholder: "请输入关键字",
+    searchButton: "搜索",
+	allCategories: "全部分类",
   },
   // (tabs)/admin/_layout.tsx
   adminLayout: {

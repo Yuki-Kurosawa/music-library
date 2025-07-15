@@ -1,24 +1,46 @@
+import { Picker } from '@react-native-picker/picker';
 import { Link, useFocusEffect } from 'expo-router';
-import { useCallback, useState } from 'react';
-import { ActivityIndicator, Button, FlatList, Image, Pressable, StyleSheet, View } from 'react-native';
+import { useCallback, useEffect, useState } from 'react';
+import { ActivityIndicator, Button, FlatList, Image, Pressable, StyleSheet, TextInput, View } from 'react-native';
 
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { ImageURLMap, ServiceAPI } from '@/constants/Api';
 import { Strings } from '@/constants/Strings';
 import { useThemeColor } from '@/hooks/useThemeColor';
-import { Song } from '@/types/database';
+import { Category, Song } from '@/types/database';
 
-const fetchSongs = async (page: number): Promise<{ data: Song[]; hasMore: boolean }> => {
-  console.log(`Fetching page: ${page}`);
-  
+const SEARCH_TYPES = Strings.admin.searchTypes;
+
+const fetchCategories = async (): Promise<Category[]> => {
   try {
-    const response = await fetch(ServiceAPI.GetSongs(page));
-    
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    
+    const response = await fetch(ServiceAPI.GetCategories());
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching categories:', error);
+    return [];
+  }
+};
+
+const fetchSongs = async (
+  page: number,
+  searchType: string,
+  keyword: string,
+  categoryId: number | null
+): Promise<{ data: Song[]; hasMore: boolean }> => {
+  try {
+    let url =
+      keyword || (categoryId && categoryId > 0)
+        ? ServiceAPI.SearchSongs(
+            searchType,
+            categoryId ?? 0,
+            encodeURIComponent(keyword),
+            page
+          )
+        : ServiceAPI.GetSongs(page);
+    const response = await fetch(url);
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
     const result = await response.json();
     
     // Assuming the API returns data in format: { songs: Song[], hasMore: boolean }
@@ -40,16 +62,26 @@ export default function AdminScreen() {
   const [hasMore, setHasMore] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // 搜索相关状态
+  const [searchType, setSearchType] = useState('title');
+  const [keyword, setKeyword] = useState('');
+  const [inputKeyword, setInputKeyword] = useState('');
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
+
   const itemSeparatorColor = useThemeColor({ light: '#eee', dark: '#333' }, 'text');
+
+  useEffect(() => {
+    fetchCategories().then(setCategories);
+  }, []);
 
   useFocusEffect(
     useCallback(() => {
       const loadSongs = async () => {
         setLoading(true);
         setError(null);
-        
         try {
-          const result = await fetchSongs(page);
+          const result = await fetchSongs(page, searchType, keyword, selectedCategory);
           setSongs(result.data);
           setHasMore(result.hasMore);
         } catch (err) {
@@ -61,8 +93,13 @@ export default function AdminScreen() {
       };
 
       loadSongs();
-    }, [page])
+    }, [page, searchType, keyword, selectedCategory])
   );
+
+  const handleSearch = () => {
+    setPage(1);
+    setKeyword(inputKeyword.trim());
+  };
 
   const renderItem = ({ item }: { item: Song }) => (
     <Link href={{ pathname: '/admin/edit', params: { songId: item.id } }} asChild>
@@ -73,6 +110,11 @@ export default function AdminScreen() {
           <ThemedText type="default" style={styles.artist}>
             {item.artist}
           </ThemedText>
+          {categories.find(c => c.id === item.category_id) && (
+            <ThemedText type="default" style={styles.category}>
+              {categories.find(c => c.id === item.category_id)?.name}
+            </ThemedText>
+          )}
         </View>
         <ThemedText>&gt;</ThemedText>
       </Pressable>
@@ -83,7 +125,6 @@ export default function AdminScreen() {
     if (loading && page === 1) {
       return <ActivityIndicator size="large" style={styles.loader} />;
     }
-
     if (error) {
       return (
         <View style={styles.errorContainer}>
@@ -92,7 +133,6 @@ export default function AdminScreen() {
         </View>
       );
     }
-
     if (songs.length === 0) {
       return (
         <View style={styles.emptyContainer}>
@@ -100,7 +140,6 @@ export default function AdminScreen() {
         </View>
       );
     }
-
     return (
       <FlatList
         data={songs}
@@ -117,25 +156,61 @@ export default function AdminScreen() {
       <ThemedText type="title" style={styles.title}>
         {Strings.admin.manageSongs}
       </ThemedText>
-      <View style={styles.headerActions}>
-        <Link href="/admin/create" asChild>
-          <Button title={Strings.admin.createNewSong} />
-        </Link>
+      {/* 搜索区域 */}
+      <View style={styles.searchBarColumn}>
+        <View style={styles.searchRow}>
+          <Picker
+            selectedValue={selectedCategory ?? 0}
+            style={styles.picker}
+            onValueChange={value => setSelectedCategory(value === 0 ? null : value)}
+          >
+            <Picker.Item label={Strings.admin.allCategories} value={0} />
+            {categories.map(category => (
+              <Picker.Item key={category.id} label={category.name} value={category.id} />
+            ))}
+          </Picker>
+        </View>
+        <View style={styles.searchRow}>
+          <Picker
+            selectedValue={searchType}
+            style={styles.picker}
+            onValueChange={setSearchType}
+          >
+            {SEARCH_TYPES.map(type => (
+              <Picker.Item key={type.value} label={type.label} value={type.value} />
+            ))}
+          </Picker>
+        </View>
+        <View style={styles.searchRow}>
+          <TextInput
+            style={styles.input}
+            placeholder={Strings.admin.searchPlaceholder}
+            value={inputKeyword}
+            onChangeText={setInputKeyword}
+            onSubmitEditing={handleSearch}
+            returnKeyType="search"
+          />
+        </View>
+        {/* 新容器，将搜索按钮和新建按钮放在同一行 */}
+        <View style={styles.buttonRow}>
+          <Button title={Strings.admin.searchButton} onPress={handleSearch} style={styles.button} />
+          <Link href="/admin/create" asChild>
+            <Button title={Strings.admin.createNewSong} style={styles.button} />
+          </Link>
+        </View>
       </View>
-      
       {renderContent()}
-      
       <View style={styles.pagination}>
-        <Button 
+        <Button
           title={Strings.admin.previous}
-          onPress={() => setPage(p => p - 1)} 
-          disabled={page === 1 || loading} 
+          onPress={() => setPage(p => p - 1)}
+          disabled={page === 1 || loading}
         />
         <ThemedText style={styles.pageNumber}>{Strings.admin.page} {page}</ThemedText>
-        <Button 
+        <Button
           title={Strings.admin.next}
-          onPress={() => setPage(p => p + 1)} 
-          disabled={!hasMore || loading} 
+          onPress={() => setPage(p => p + 1)}
+          disabled={!hasMore || loading}
         />
       </View>
     </ThemedView>
@@ -143,6 +218,16 @@ export default function AdminScreen() {
 }
 
 const styles = StyleSheet.create({
+  buttonRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between', // 按钮均匀分布
+    alignItems: 'center',
+    marginTop: 8,
+  },
+  button: {
+    flex: 1, // 按钮平均分配宽度
+    marginHorizontal: 4, // 按钮之间的间距
+  },
   container: {
     flex: 1,
     paddingTop: 50, // Adjust for status bar
@@ -155,6 +240,33 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     marginBottom: 10,
     alignItems: 'flex-start',
+  },
+  searchBarColumn: {
+    flexDirection: 'column',
+    paddingHorizontal: 10,
+    marginBottom: 10,
+  },
+  searchRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  picker: {
+    flex: 1,
+    borderWidth: 2,
+    borderRadius: 5,
+    borderColor: '#ccc',
+    marginBottom: 5,
+    backgroundColor: '#fff',
+  },
+  input: {
+    flex: 1,
+    height: 40,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 6,
+    paddingHorizontal: 8,
+    backgroundColor: '#fff',
   },
   list: {
     flex: 1,
@@ -179,6 +291,11 @@ const styles = StyleSheet.create({
   artist: {
     opacity: 0.7,
     marginTop: 2,
+  },
+  category: {
+    opacity: 0.6,
+    marginTop: 2,
+    fontSize: 13,
   },
   separator: {
     height: 1,
