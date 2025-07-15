@@ -2,6 +2,7 @@
 using Org.BouncyCastle.Utilities.Encoders;
 using GoogleAuthenticator;
 using TOTPVerify;
+using CryptTool.Core;
 
 namespace net_api.Security
 {
@@ -29,7 +30,7 @@ namespace net_api.Security
                 try
                 {
                     //Token Type 2: Base64 encoded token
-                    Base64.Decode(token);
+                    Base64.Decode(token.Split('.')[0]);
                     type = 2;
                 }
                 catch
@@ -59,7 +60,20 @@ namespace net_api.Security
 
         private static bool VerifyDerToken(string token,string key)
         {
-            return true;
+            string pem = "-----BEGIN PUBLIC KEY-----\n" + key + "\n-----END PUBLIC KEY-----";
+
+            var rsa = RSACryptoHelper.PemToRSAKey(pem);
+
+            string[] content = token.Split('.');
+
+            if (content.Length != 2) return false;
+
+            var data = Convert.FromBase64String(content[0]);
+            var sign = Convert.FromBase64String(content[1]);
+
+            var ret = RSACryptoHelper.Verify(rsa, data, sign, "SHA256");
+
+            return ret;
         }
 
         private static bool VerifyTotpToken(string token,string key)
