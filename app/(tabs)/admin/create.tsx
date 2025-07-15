@@ -88,7 +88,7 @@ export default function CreateSongScreen() {
 
   const handleSave = async () => {
 	if (!song.artist) {
-	  AlertWrap.alert(Strings.songForm.error, Strings.songForm.artistPlaceholder);
+	  AlertWrap.alert(Strings.songForm.error, Strings.songForm.artistNeeded);
 	  return;
 	}
 	setSaving(true);
@@ -165,7 +165,6 @@ export default function CreateSongScreen() {
 			style={[styles.input, { color: textColor, borderColor }]}
 			value={song.title ?? ''}
 			onChangeText={text => setSong(s => ({ ...s, title: text || undefined }))}
-			placeholder={Strings.songForm.songTitlePlaceholder}
 		  />
 
 		  <ThemedText style={styles.label}>{Strings.songForm.titleHiragana}</ThemedText>
@@ -173,7 +172,6 @@ export default function CreateSongScreen() {
 			style={[styles.input, { color: textColor, borderColor }]}
 			value={song.title_hiragana ?? ''}
 			onChangeText={text => setSong(s => ({ ...s, title_hiragana: text || undefined }))}
-			placeholder={Strings.songForm.titleHiraganaPlaceholder}
 		  />
 
 		  <ThemedText style={styles.label}>{Strings.songForm.titleKatakana}</ThemedText>
@@ -181,7 +179,6 @@ export default function CreateSongScreen() {
 			style={[styles.input, { color: textColor, borderColor }]}
 			value={song.title_katakana ?? ''}
 			onChangeText={text => setSong(s => ({ ...s, title_katakana: text || undefined }))}
-			placeholder={Strings.songForm.titleKatakanaPlaceholder}
 		  />
 
 		  <ThemedText style={styles.label}>{Strings.songForm.titleRomaji}</ThemedText>
@@ -189,7 +186,6 @@ export default function CreateSongScreen() {
 			style={[styles.input, { color: textColor, borderColor }]}
 			value={song.title_romaji ?? ''}
 			onChangeText={text => setSong(s => ({ ...s, title_romaji: text || undefined }))}
-			placeholder={Strings.songForm.titleRomajiPlaceholder}
 		  />
 
 		  <ThemedText style={styles.label}>{Strings.songForm.artist}</ThemedText>
@@ -197,7 +193,6 @@ export default function CreateSongScreen() {
 			style={[styles.input, { color: textColor, borderColor }]}
 			value={song.artist}
 			onChangeText={text => setSong(s => ({ ...s, artist: text }))}
-			placeholder={Strings.songForm.artistPlaceholder}
 		  />
 
 		  <ThemedText style={styles.label}>{Strings.songForm.category}</ThemedText>
@@ -254,7 +249,6 @@ export default function CreateSongScreen() {
 			style={[styles.input, { color: textColor, borderColor }]}
 			value={song.from_url ?? ''}
 			onChangeText={text => setSong(s => ({ ...s, from_url: text || undefined }))}
-			placeholder={Strings.songForm.sourceUrlPlaceholder}
 		  />
 
 		  <ThemedText style={styles.label}>{Strings.songForm.imageUrl}</ThemedText>
@@ -262,7 +256,6 @@ export default function CreateSongScreen() {
 			style={[styles.input, { color: textColor, borderColor }]}
 			value={song.image_url ?? ''}
 			onChangeText={text => setSong(s => ({ ...s, image_url: text || undefined }))}
-			placeholder={Strings.songForm.imageUrlPlaceholder}
 		  />
 
 		  <View style={styles.actionsContainer}>

@@ -180,7 +180,6 @@ export default function AdminScreen() {
         <View style={styles.searchRow}>
           <TextInput
             style={styles.input}
-            placeholder={Strings.home.searchPlaceholder}
             value={inputKeyword}
             onChangeText={setInputKeyword}
             onSubmitEditing={handleSearch}
