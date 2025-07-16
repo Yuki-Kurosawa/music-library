@@ -45,6 +45,12 @@
         "projectId": "d430c713-3bd3-47f8-a190-7bc1d307ccbe"
       }
     },
-    "owner": "yukikurosawadev"
+    "owner": "yukikurosawadev",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/d430c713-3bd3-47f8-a190-7bc1d307ccbe"
+    }
   }
 }
