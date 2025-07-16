@@ -15,7 +15,7 @@ export default function AboutScreen() {
       <ThemedView style={styles.section}>
 		<ThemedText type="subtitle">開発チーム：</ThemedText>
 		<ThemedText>黒澤　ゆき <Link href="https://x.com/YukiKurosawaDev">@YukiKurosawaDev</Link></ThemedText>
-		<ThemedText>佐々木　佑奈 <Link href="https://x.com/YukiKurosawaDev">@YuunaSasakiDev</Link></ThemedText>
+		<ThemedText>佐々木　友奈 <Link href="https://x.com/YukiKurosawaDev">@YuunaSasakiDev</Link></ThemedText>
 		<ThemedText>一ノ瀬　百合 <Link href="https://x.com/YukiKurosawaDev">@YuriIchinoseDev</Link></ThemedText>
 		<ThemedText>一ノ瀬　佑芽 <Link href="https://x.com/YukiKurosawaDev">@YumeIchinoseDev</Link></ThemedText>
         <ThemedText>&copy; Copyright 2025 All rights Reserved</ThemedText>
