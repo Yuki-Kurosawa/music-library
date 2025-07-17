@@ -4,6 +4,7 @@ using System.Data.SQLite;
 using F = System.IO.File;
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
+using Newtonsoft.Json;
 
 namespace net_api.Controllers
 {
@@ -11,42 +12,91 @@ namespace net_api.Controllers
 	[ApiController]
 	public class InstallController : ControllerBase
 	{
-		private string database;
+		private string database, datafile;
 
 		public InstallController(IConfiguration configuration)
 		{
 			database = configuration.GetConnectionString("DefaultConnection");
-		}
+            datafile = database.Replace("Data Source=", "").Trim(';').Trim();
+        }
 
 		[HttpGet,Route("Install"),Authorize]
 		public string Install()
 		{
-			SQLiteConnection con = new SQLiteConnection(database);
-			con.Open();
+			try
+			{
+				if(F.Exists(datafile))
+				{
+					return JsonConvert.SerializeObject(new { code = 500, message = "Database Already Exists" });
+                }
 
-			SQLiteCommand cmd = new SQLiteCommand(con);
-			cmd.CommandText = F.ReadAllText("DATABASE.sql", Encoding.UTF8);
-			cmd.ExecuteNonQuery();
+                SQLiteConnection con = new SQLiteConnection(database);
+				con.Open();
 
-			con.Close();
-			return "OK";
+				SQLiteCommand cmd = new SQLiteCommand(con);
+				cmd.CommandText = F.ReadAllText("DATABASE.sql", Encoding.UTF8);
+				cmd.ExecuteNonQuery();
+
+				con.Close();
+				return JsonConvert.SerializeObject(new { code = 200, message = "Database Installed Successfully" });
+			}
+			catch
+			{
+                return JsonConvert.SerializeObject(new { code = 500, message = "Database Install Failed" });
+            }
 		}
 
 		[HttpGet,Route("InitDB"),Authorize]
 		public string InitDB()
 		{
-			SQLiteConnection con = new SQLiteConnection(database);
-			con.Open();
+			try
+			{
 
-			SQLiteCommand cmd = new SQLiteCommand(con);
-			cmd.CommandText = F.ReadAllText("INITDB.sql", Encoding.UTF8);
-			cmd.ExecuteNonQuery();
+				if(!F.Exists(datafile))
+				{
+					return JsonConvert.SerializeObject(new { code = 404, message = "Database Not Found" });
+                }
 
-			con.Close();
-			return "OK";
-		}
+                SQLiteConnection con = new SQLiteConnection(database);
+				con.Open();
 
-		[HttpGet,Route("Auth"),Authorize]
+				SQLiteCommand cmd = new SQLiteCommand(con);
+				cmd.CommandText = F.ReadAllText("INITDB.sql", Encoding.UTF8);
+				cmd.ExecuteNonQuery();
+
+				con.Close();
+                return JsonConvert.SerializeObject(new { code = 200, message = "Database Initialized Successfully" });
+            }
+			catch
+			{
+				return JsonConvert.SerializeObject(new { code = 500, message = "Database Initialize Failed" });
+            }
+        }
+
+        [HttpGet, Route("DeleteDB"), Authorize]
+        public string DeleteDB()
+		{
+			try
+			{
+				
+
+				if (F.Exists(datafile))
+				{
+					F.Delete(datafile);
+					return JsonConvert.SerializeObject(new { code = 200, message = "Database Ruined" });
+				}
+				else
+				{
+					return JsonConvert.SerializeObject(new { code = 404, message = "Database Not Found" });
+				}
+			}
+			catch
+			{
+				return JsonConvert.SerializeObject(new { code = 500, message = "Database Delete Failed" });
+			}
+        }
+
+        [HttpGet,Route("Auth"),Authorize]
 		public string Auth ()
 		{
 			return "DONE";
