@@ -9,7 +9,7 @@ export default function AboutScreen() {
     <ScrollView contentContainerStyle={styles.container}>
       <ThemedView style={styles.section}>
         <ThemedText type="subtitle">音楽ライブラリ</ThemedText>
-        <ThemedText type="subtitle" style={styles.version}>バージョン 1.0.0</ThemedText>
+        <ThemedText type="subtitle" style={styles.version}>バージョン 1.0.1</ThemedText>
       </ThemedView>    
 
       <ThemedView style={styles.section}>

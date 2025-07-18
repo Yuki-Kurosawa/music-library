@@ -25,7 +25,7 @@ export const Strings = {
   },
   adminLayout: {
     editSong: "編集",
-    createSong: "作成",	
+    createSong: "追加",	
     search: "検索",
   },
   // (tabs)/_layout.tsx
