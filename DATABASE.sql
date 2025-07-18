@@ -24,6 +24,7 @@ CREATE TABLE Song (
     title_katakana TEXT,
     title_romaji TEXT,
     artist TEXT NOT NULL,
+	description TEXT,
     category_id INTEGER NOT NULL,
     add_time INTEGER NOT NULL,
     from_platform INTEGER,

@@ -28,7 +28,7 @@ namespace net_api.Controllers
 
                 var sql = @"
                     SELECT s.id, s.title, s.title_hiragana, s.title_katakana, s.title_romaji, 
-                           s.artist, s.category_id, s.add_time, s.from_platform, s.from_url, s.image_url,
+                           s.artist, s.description, s.category_id, s.add_time, s.from_platform, s.from_url, s.image_url,
                            c.name as category_name, c.name_english as category_name_english,
                            p.name as platform_name, p.type as platform_type, p.url as platform_url
                     FROM Song s
@@ -45,6 +45,7 @@ namespace net_api.Controllers
                     title_katakana = row.title_katakana,
                     title_romaji = row.title_romaji,
                     artist = row.artist,
+                    description = row.description,
                     category_id = row.category_id,
                     add_time = row.add_time,
                     from_platform = row.from_platform ?? 0,
@@ -80,7 +81,7 @@ namespace net_api.Controllers
 
                 var sql = @"
                     SELECT s.id, s.title, s.title_hiragana, s.title_katakana, s.title_romaji, 
-                           s.artist, s.category_id, s.add_time, s.from_platform, s.from_url, s.image_url,
+                           s.artist, s.description, s.category_id, s.add_time, s.from_platform, s.from_url, s.image_url,
                            c.name as category_name, c.name_english as category_name_english,
                            p.name as platform_name, p.type as platform_type, p.url as platform_url
                     FROM Song s
@@ -100,6 +101,7 @@ namespace net_api.Controllers
                     title_katakana = row.title_katakana,
                     title_romaji = row.title_romaji,
                     artist = row.artist,
+                    description = row.description,
                     category_id = row.category_id,
                     add_time = row.add_time,
                     from_platform = row.from_platform ?? 0,
@@ -134,8 +136,8 @@ namespace net_api.Controllers
                 using var con = new SQLiteConnection(_database);
 
                 var sql = @"
-                    INSERT INTO Song (title, title_hiragana, title_katakana, title_romaji, artist, category_id, add_time, from_platform, from_url, image_url)
-                    VALUES (@title, @title_hiragana, @title_katakana, @title_romaji, @artist, @category_id, @add_time, @from_platform, @from_url, @image_url);
+                    INSERT INTO Song (title, title_hiragana, title_katakana, title_romaji, artist, description, category_id, add_time, from_platform, from_url, image_url)
+                    VALUES (@title, @title_hiragana, @title_katakana, @title_romaji, @artist, @description, @category_id, @add_time, @from_platform, @from_url, @image_url);
                     SELECT last_insert_rowid();";
 
                 var newId = con.ExecuteScalar<long>(sql, new
@@ -145,6 +147,7 @@ namespace net_api.Controllers
                     title_katakana = request.title_katakana,
                     title_romaji = request.title_romaji,
                     artist = request.artist,
+                    descriptiion = request.description,
                     category_id = request.category_id,
                     add_time = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
                     from_platform = request.from_platform,
@@ -195,6 +198,11 @@ namespace net_api.Controllers
                 {
                     setParts.Add("artist = @artist");
                     parameters.Add("@artist", request.artist);
+                }
+                if (request.description != null)
+                {
+                    setParts.Add("description = @description");
+                    parameters.Add("@description", request.description);
                 }
                 if (request.category_id.HasValue)
                 {
@@ -276,7 +284,7 @@ namespace net_api.Controllers
 
                 sql = @"
                     SELECT s.id, s.title, s.title_hiragana, s.title_katakana, s.title_romaji, 
-                           s.artist, s.category_id, s.add_time, s.from_platform, s.from_url, s.image_url,
+                           s.artist, s.description, s.category_id, s.add_time, s.from_platform, s.from_url, s.image_url,
                            c.name as category_name, c.name_english as category_name_english,
                            p.name as platform_name, p.type as platform_type, p.url as platform_url
                     FROM Song s
@@ -323,6 +331,7 @@ namespace net_api.Controllers
                     title_katakana = row.title_katakana,
                     title_romaji = row.title_romaji,
                     artist = row.artist,
+                    description = row.description,
                     category_id = row.category_id,
                     add_time = row.add_time,
                     from_platform = row.from_platform ?? 0,
@@ -357,6 +366,7 @@ namespace net_api.Controllers
         public string? title_katakana { get; set; }
         public string? title_romaji { get; set; }
         public string artist { get; set; } = string.Empty;
+        public string? description { get; set; }
         public int category_id { get; set; }
         public int? from_platform { get; set; }
         public string? from_url { get; set; }
@@ -370,6 +380,7 @@ namespace net_api.Controllers
         public string? title_katakana { get; set; }
         public string? title_romaji { get; set; }
         public string? artist { get; set; }
+        public string? description { get; set; }
         public int? category_id { get; set; }
         public int? from_platform { get; set; }
         public string? from_url { get; set; }

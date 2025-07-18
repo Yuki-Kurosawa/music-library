@@ -41,6 +41,7 @@ DIC: Dictionary<br/>
 | title_katakana | text | Song Title in Katakana |  |
 | title_romaji | text | Song Title in Romaji or English |  |
 | artist      | text | Song Artist | NN |
+| description | text | Song Description |  |
 | category_id | int  | Song Category ID | FK,NN |
 | add_time    | long | Song Add Time | NN |
 | from_platform | int | Song Source Platform ID | FK  |
