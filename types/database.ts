@@ -42,6 +42,7 @@ export type Song = {
   title_katakana?: string;
   title_romaji?: string;
   artist: string;
+  description?: string;
   category_id: number;
   add_time: number;
   from_platform?: number;

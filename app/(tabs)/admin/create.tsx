@@ -195,6 +195,13 @@ export default function CreateSongScreen() {
 			onChangeText={text => setSong(s => ({ ...s, artist: text }))}
 		  />
 
+		  <ThemedText style={styles.label}>{Strings.songForm.description}</ThemedText>
+		  <TextInput
+			style={[styles.input, { color: textColor, borderColor }]}
+			value={song.description ?? ''}
+			onChangeText={text => setSong(s => ({ ...s, description: text }))}
+		  />
+
 		  <ThemedText style={styles.label}>{Strings.songForm.category}</ThemedText>
 		  <View style={[styles.pickerContainer, { borderColor }]}>
 			<Picker

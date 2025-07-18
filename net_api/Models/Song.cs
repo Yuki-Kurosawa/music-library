@@ -8,6 +8,8 @@ namespace net_api.Models
         public string? TitleKatakana { get; set; }
         public string? TitleRomaji { get; set; }
         public string Artist { get; set; } = string.Empty;
+
+        public string? Description { get; set; }
         public int CategoryId { get; set; }
         public long AddTime { get; set; }
         public int? FromPlatform { get; set; }

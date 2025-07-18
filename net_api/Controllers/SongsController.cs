@@ -147,7 +147,7 @@ namespace net_api.Controllers
                     title_katakana = request.title_katakana,
                     title_romaji = request.title_romaji,
                     artist = request.artist,
-                    descriptiion = request.description,
+                    description = request.description,
                     category_id = request.category_id,
                     add_time = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
                     from_platform = request.from_platform,

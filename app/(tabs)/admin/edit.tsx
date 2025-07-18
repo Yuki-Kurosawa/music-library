@@ -203,7 +203,6 @@ export default function EditSongScreen() {
 			style={[styles.input, { color: textColor, borderColor }]}
 			value={song.title ?? ''}
 			onChangeText={text => setSong(s => (s ? { ...s, title: text } : null))}
-			placeholder={Strings.songForm.songTitlePlaceholder}
 		  />
 
 		  <ThemedText style={styles.label}>{Strings.songForm.titleHiragana}</ThemedText>
@@ -211,7 +210,6 @@ export default function EditSongScreen() {
 			style={[styles.input, { color: textColor, borderColor }]}
 			value={song.title_hiragana ?? ''}
 			onChangeText={text => setSong(s => (s ? { ...s, title_hiragana: text } : null))}
-			placeholder={Strings.songForm.titleHiraganaPlaceholder}
 		  />
 
 		  <ThemedText style={styles.label}>{Strings.songForm.titleKatakana}</ThemedText>
@@ -219,7 +217,6 @@ export default function EditSongScreen() {
 			style={[styles.input, { color: textColor, borderColor }]}
 			value={song.title_katakana ?? ''}
 			onChangeText={text => setSong(s => (s ? { ...s, title_katakana: text } : null))}
-			placeholder={Strings.songForm.titleKatakanaPlaceholder}
 		  />
 
 		  <ThemedText style={styles.label}>{Strings.songForm.titleRomaji}</ThemedText>
@@ -227,7 +224,6 @@ export default function EditSongScreen() {
 			style={[styles.input, { color: textColor, borderColor }]}
 			value={song.title_romaji ?? ''}
 			onChangeText={text => setSong(s => (s ? { ...s, title_romaji: text } : null))}
-			placeholder={Strings.songForm.titleRomajiPlaceholder}
 		  />
 
 		  <ThemedText style={styles.label}>{Strings.songForm.artist}</ThemedText>
@@ -235,8 +231,15 @@ export default function EditSongScreen() {
 			style={[styles.input, { color: textColor, borderColor }]}
 			value={song.artist}
 			onChangeText={text => setSong(s => (s ? { ...s, artist: text } : null))}
-			placeholder={Strings.songForm.artistPlaceholder}
 		  />
+
+		  
+			<ThemedText style={styles.label}>{Strings.songForm.description}</ThemedText>
+			<TextInput
+			style={[styles.input, { color: textColor, borderColor }]}
+			value={song.description ?? ''}
+			onChangeText={text => setSong(s => ({ ...s, description: text }))}
+			/>
 
 		  <ThemedText style={styles.label}>{Strings.songForm.category}</ThemedText>
 		  <View style={[styles.pickerContainer, { borderColor }]}>
@@ -292,7 +295,6 @@ export default function EditSongScreen() {
 			style={[styles.input, { color: textColor, borderColor }]}
 			value={song.from_url ?? ''}
 			onChangeText={text => setSong(s => (s ? { ...s, from_url: text } : null))}
-			placeholder={Strings.songForm.sourceUrlPlaceholder}
 		  />
 
 		  <ThemedText style={styles.label}>{Strings.songForm.imageUrl}</ThemedText>
@@ -300,7 +302,6 @@ export default function EditSongScreen() {
 			style={[styles.input, { color: textColor, borderColor }]}
 			value={song.image_url ?? ''}
 			onChangeText={text => setSong(s => (s ? { ...s, image_url: text } : null))}
-			placeholder={Strings.songForm.imageUrlPlaceholder}
 		  />
 
 		  <View style={styles.actionsContainer}>
