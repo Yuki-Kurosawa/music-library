@@ -286,7 +286,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   artist: {
-    opacity: 0.7,
     marginTop: 1,
     color: '#fff', 
     fontSize: 14
@@ -306,10 +305,14 @@ const styles = StyleSheet.create({
     fontSize: 16 
   },
   description: {
-    opacity: 0.7,
     marginTop: 4,
     color: '#fff', 
-	fontSize: 16 
+	fontSize: 16,
+    borderRadius: 12,
+    borderWidth: 5,
+    borderColor: '#d429ff',
+    backgroundColor: '#d94fff',
+	paddingHorizontal:5
   },
   separator: {
     height: 1,
