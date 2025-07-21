@@ -101,25 +101,33 @@ export default function AdminScreen() {
     setKeyword(inputKeyword.trim());
   };
 
-  const renderItem = ({ item }: { item: Song }) => (
-    <Link href={{ pathname: '/admin/edit', params: { songId: item.id } }} asChild>
-      <Pressable style={styles.itemContainer}>
-        {item.image_url && <Image source={{ uri: ImageURLMap(item.image_url) }} style={styles.thumbnail} />}
-        <View style={styles.songInfo}>
-          <ThemedText type="subtitle">{item.title ?? Strings.admin.untitled}</ThemedText>
-          <ThemedText type="default" style={styles.artist}>
-            {item.artist}
-          </ThemedText>
-          {categories.find(c => c.id === item.category_id) && (
-            <ThemedText type="default" style={styles.category}>
-              {categories.find(c => c.id === item.category_id)?.name}
+  const renderItem = ({ item }: { item: Song }) => {
+    const category = categories.find(c => c.id === item.category_id);
+    return (
+      <Link href={{ pathname: '/admin/edit', params: { songId: item.id } }} asChild>
+        <Pressable style={styles.itemContainer}>
+          {item.image_url && <Image source={{ uri: ImageURLMap(item.image_url) }} style={styles.thumbnail} />}
+          <View style={styles.songInfo}>
+            <ThemedText type="subtitle">{item.title ?? Strings.admin.untitled}</ThemedText>
+			{item.description && (
+              <ThemedText type="default" style={styles.description}>
+                {item.description}
+              </ThemedText>
+            )}
+            {category && (
+              <ThemedText type="default" style={styles.category}>
+                {category.name}
+              </ThemedText>
+            )}
+            <ThemedText type="default" style={styles.artist}>
+			  {Strings.admin.artist} {item.artist}
             </ThemedText>
-          )}
-        </View>
-        <ThemedText>&gt;</ThemedText>
-      </Pressable>
-    </Link>
-  );
+          </View>
+          <ThemedText>&gt;</ThemedText>
+        </Pressable>
+      </Link>
+    );
+  };
 
   const renderContent = () => {
     if (loading && page === 1) {
@@ -272,20 +280,32 @@ const styles = StyleSheet.create({
   },
   itemContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 15,
-    paddingHorizontal: 20,
+    padding: 15,
+    marginVertical: 8,
+    marginHorizontal: 16,
+    borderRadius: 12, // Round - corner rectangle
+    backgroundColor: '#fff', // Container background color
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 2,
   },
   thumbnail: {
-    width: 50,
-    height: 50,
-    borderRadius: 4,
+    width: 100,
+    height: 100,
+    borderRadius: 8,
     marginRight: 15,
   },
   songInfo: {
     flex: 1,
     justifyContent: 'center',
+  },
+  description: {
+    opacity: 0.7,
+    marginTop: 4,
+    fontSize: 13,
   },
   artist: {
     opacity: 0.7,

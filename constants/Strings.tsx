@@ -20,7 +20,8 @@ const commonStrings = {
 export const Strings = {
   // (tabs)/index.tsx
   home: {
-    pageTitle: "ライブラリ",
+    pageTitle: "ライブラリ",	
+	artist:"ARTIST:",
     ...commonStrings,
   },
   adminLayout: {
@@ -88,6 +89,7 @@ export const Strings = {
   admin: {
     pageTitle: "管理",
     createNewSong: "追加",
+	artist:"ARTIST:",
     ...commonStrings,
   },
   // (tabs)/admin/_layout.tsx

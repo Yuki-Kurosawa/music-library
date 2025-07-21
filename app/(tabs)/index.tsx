@@ -102,16 +102,25 @@ export default function AdminScreen() {
         <Pressable style={styles.itemContainer}>
           {item.image_url && <Image source={{ uri: ImageURLMap(item.image_url) }} style={styles.thumbnail} />}
           <View style={styles.songInfo}>
-            <ThemedText type="subtitle">{item.title ?? Strings.home.untitled}</ThemedText>
-            <ThemedText type="default" style={styles.artist}>
-              {item.artist}
-            </ThemedText>
-            {category && (
-              <ThemedText type="default" style={styles.category}>
-                {category.name}
+            <ThemedText type="subtitle" style={[styles.subtitle]}>{item.title ?? Strings.home.untitled}</ThemedText>            
+            {item.description && (
+              <ThemedText type="default" style={styles.description}>
+                {item.description}
               </ThemedText>
             )}
+			<ThemedText type="default" style={styles.artist}>
+              {Strings.home.artist}
+            </ThemedText>
+			<ThemedText type="default" style={styles.artist}>
+              {item.artist}
+            </ThemedText>
           </View>
+          {/* Move category to top-right corner */}
+          {category && (
+            <ThemedText type="default" style={styles.category}>
+              {category.name}
+            </ThemedText>
+          )}
         </Pressable>
       </Link>
     );
@@ -247,29 +256,64 @@ const styles = StyleSheet.create({
   },
   itemContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-  },
-  thumbnail: {
-    width: 50,
-    height: 50,
-    borderRadius: 4,
-    marginRight: 15,
+    padding: 15,
+    marginVertical: 8,
+    marginHorizontal: 16,
+    borderRadius: 12,
+    borderWidth: 5,
+    borderColor: '#267fcf',
+    backgroundColor: '#319df8', 
+    shadowColor: '#ffffff',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.5,
+    shadowRadius: 5,
+    elevation: 5,
+    position: 'relative', // Add relative positioning to itemContainer
   },
   songInfo: {
     flex: 1,
     justifyContent: 'center',
   },
+  thumbnail: {
+    width: 120,
+    height: 120,
+    borderRadius: 8,
+    marginRight: 15,
+  },
+  subtitle: {
+    color: '#fff', 
+    fontSize: 20,
+  },
   artist: {
     opacity: 0.7,
-    marginTop: 2,
+    marginTop: 1,
+    color: '#fff', 
+    fontSize: 14
   },
   category: {
-    opacity: 0.6,
-    marginTop: 2,
-    fontSize: 13,
+    position: 'absolute', 
+    top: -15, 
+    right: 15, 
+    color: '#fff', 
+	borderRadius: 12,
+    borderWidth: 5,
+    borderColor: '#267fcf',
+    backgroundColor: '#ac24fa', 
+    shadowColor: '#ffffff',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.5,
+    shadowRadius: 5,
+    elevation: 5,
+	paddingLeft:10,
+	paddingRight:10,
+    fontSize: 16 
+  },
+  description: {
+    opacity: 0.7,
+    marginTop: 4,
+    color: '#fff', 
+	fontSize: 16 
   },
   separator: {
     height: 1,
