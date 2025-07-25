@@ -7,3 +7,8 @@
 # This is a music list for Yuki.
 # used for quick insert only
 
+# Line format:
+# title,artist
+# if any field include spaces or commas please quote it like "title 1","artist 1"
+# Lines begins with a sharp(#) are comment lines, and please ignore any empty lines.
+
