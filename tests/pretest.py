@@ -42,7 +42,7 @@ def generate_rsa_key_pair():
 
 # 更新 appsettings.json 文件
 def update_appsettings():
-    appsettings_path = 'e:/Repo/music_library/net_api/appsettings.json'
+    appsettings_path = './music_library/net_api/appsettings.json'
     if not os.path.exists(appsettings_path):
         print(f"文件 {appsettings_path} 不存在")
         return
@@ -64,7 +64,7 @@ def update_appsettings():
         json.dump(config, f, indent=2)
 
     # 保存私钥到 privkey.pem
-    privkey_path = 'e:/Repo/music_library/net_api/privkey.pem'
+    privkey_path = './music_library/net_api/privkey.pem'
     with open(privkey_path, 'w', encoding='utf-8') as f:
         f.write(private_key)
 

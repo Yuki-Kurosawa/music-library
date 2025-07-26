@@ -14,7 +14,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 
 # 加载 appsettings.json 文件获取授权令牌
 def get_auth_tokens():
-    appsettings_path = 'e:/Repo/music_library/net_api/appsettings.json'
+    appsettings_path = './music_library/net_api/appsettings.json'
     if not os.path.exists(appsettings_path):
         logging.error(f"文件 {appsettings_path} 不存在")
         return None, None, None
@@ -25,7 +25,7 @@ def get_auth_tokens():
     totp_key = config.get('ApiKeyConfig', {}).get('TOTPKey')
     rsa_key = config.get('ApiKeyConfig', {}).get('RSAKey')
     # 从文件读取私钥
-    privkey_path = 'e:/Repo/music_library/net_api/privkey.pem'
+    privkey_path = './music_library/net_api/privkey.pem'
     if os.path.exists(privkey_path):
         with open(privkey_path, 'r', encoding='utf-8') as f:
             private_key = f.read()
