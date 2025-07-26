@@ -80,6 +80,7 @@ class OngekiSong(Song):
 @dataclass
 class ArcadeSong:
     """Class containing arcade-specific song objects"""
+    title: Optional[str] = None
     chunithm: Optional[ChunithmSong] = None
     maimai: Optional[MaimaiSong] = None
     ongeki: Optional[OngekiSong] = None
