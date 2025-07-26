@@ -7,6 +7,10 @@ import logging
 import argparse
 import time
 
+# 配置变量 - 置于脚本头部
+BASE_URL = "https://your-default-base-url.com"
+TOTP_KEY = "your-default-totp-key"
+
 # 平台和分类映射关系（源自INITDB.sql）
 PLATFORM_MAPPING = {
     'YouTube': 1,
@@ -32,8 +36,9 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 # 解析命令行参数
 def parse_arguments():
     parser = argparse.ArgumentParser(description='音乐数据导入工具')
-    parser.add_argument('--base-url', required=True, help='服务器基础路径')
-    parser.add_argument('--totp-key', required=True, help='TOTP 密钥')
+    # 移除base-url和totp-key命令行参数
+    # parser.add_argument('--base-url', required=True, help='服务器基础路径')
+    # parser.add_argument('--totp-key', required=True, help='TOTP 密钥')
     parser.add_argument('--batch-size', type=int, default=10, help='批量导入大小，默认10条')
     parser.add_argument('--delay', type=int, default=500, help='请求间隔毫秒数，默认500ms')
     return parser.parse_args()
@@ -125,47 +130,6 @@ def import_from_list_file():
     
     return music_entries, skipped_lines
 
-# 从JSON文件导入数据
-def import_from_json_files():
-    json_dir = '.'
-    if not os.path.exists(json_dir):
-        logging.warning(f"JSON目录 {json_dir} 不存在")
-        return [], []
-    
-    music_entries = []
-    errors = []
-    
-    for filename in os.listdir(json_dir):
-        if filename.endswith('.json'):
-            file_path = os.path.join(json_dir, filename)
-            try:
-                with open(file_path, 'r', encoding='utf-8') as f:
-                    data = json.load(f)
-                    
-                # 假设JSON结构包含"songs"数组
-                if isinstance(data, dict) and 'songs' in data:
-                    songs = data['songs']
-                    for song in songs:
-                        if isinstance(song, dict) and 'title' in song and 'artist' in song:
-                            music_entries.append({
-                                "Title": song['title'],
-                                "Artist": song.get('artist', ''),
-                                "TitleHiragana": song.get('title_hiragana'),
-                                "TitleKatakana": song.get('title_katakana'),
-                                "TitleRomaji": song.get('title_romaji'),
-                                "CategoryId": CATEGORY_MAPPING.get(song.get('category'), 1),
-                                "FromPlatform": PLATFORM_MAPPING.get(song.get('platform'), 0),
-                                "AddTime": int(time.time()),
-                                "source": filename
-                            })
-                    logging.info(f"从 {filename}成功导入 {len(songs)} 首歌曲")
-                else:
-                    errors.append(f"{filename}: 不支持的JSON格式")
-            except Exception as e:
-                errors.append(f"{filename}: 解析错误 - {str(e)}")
-    
-    return music_entries, errors
-
 # 导入数据到API
 def import_to_api(music_entries, args):
     if not music_entries:
@@ -180,7 +144,7 @@ def import_to_api(music_entries, args):
         logging.info(f"正在导入第 {index}/{len(music_entries)} 首: {song['Title']} - {song['Artist']}")
         
         # 导入单首歌曲
-        success, message = import_single_song(song, args.base_url, args.totp_key)
+        success, message = import_single_song(song, BASE_URL, TOTP_KEY)
         
         if success:
             success_count += 1
@@ -214,19 +178,8 @@ def main():
     
     logging.info(f"从list.txt解析到 {len(list_entries)} 条有效记录")
     
-    # 从JSON文件导入
-    logging.info("从JSON文件导入数据...")
-    json_entries, json_errors = import_from_json_files()
-    
-    if json_errors:
-        logging.warning("解析JSON文件时遇到问题:")
-        for error in json_errors:
-            logging.warning(f"- {error}")
-    
-    logging.info(f"从JSON文件解析到 {len(json_entries)} 条有效记录")
-    
     # 合并数据并去重
-    all_entries = list_entries + json_entries
+    all_entries = list_entries
     unique_entries = []
     seen = set()
     

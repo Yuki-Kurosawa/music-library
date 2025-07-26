@@ -54,3 +54,4 @@ app-example
 *.sqlite
 *.sqlite3
 tests/*.json
+__pycache__/
