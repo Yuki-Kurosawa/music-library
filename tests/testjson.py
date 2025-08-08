@@ -89,6 +89,29 @@ def dataclass_to_dict(obj):
         return [dataclass_to_dict(item) for item in obj]
     else:
         return obj
+    
+def download_image(image_url: str, platform: str, filename: str):
+
+    """下载图片到指定路径"""
+    try:
+        filepath = os.path.join('images', platform, filename)
+        real_image_url = image_url
+
+        if(platform == 'chunithm'):
+            real_image_url = "https://new.chunithm-net.com/chuni-mobile/html/mobile/img/" + image_url
+        elif(platform == 'maimai'):
+            real_image_url = "https://maimaidx.jp/maimai-mobile/img/Music/" + image_url
+        elif(platform == 'ongeki'):
+            real_image_url = "https://ongeki-net.com/ongeki-mobile/img/music/" + image_url
+
+        import requests
+        response = requests.get(real_image_url, verify=False)
+        response.raise_for_status()  # 确保请求成功
+        with open(filepath, 'wb') as f:
+            f.write(response.content)
+        print(f"图片已下载: {filepath}")
+    except Exception as e:
+        print(f"下载图片失败: {e}")
 
 if __name__ == '__main__':
     # 生成ArcadeSong对象列表
@@ -99,7 +122,26 @@ if __name__ == '__main__':
     
     # 输出到JSON文件
     with open('arcade_songs_output.json', 'w', encoding='utf-8') as f:
-        json.dump(arcade_songs_dict, f, ensure_ascii=False, indent=2)
+        json.dump(arcade_songs_dict, f, ensure_ascii=False, indent=2)    
+        
+    # 此处遍历字典并下载图片
+    for song in arcade_songs_dict:
+        # 遍历每个游戏平台
+        for platform in ['chunithm', 'maimai', 'ongeki']:
+            if song[platform] is None: continue
+            # 获取图片URL
+            image_url = song[platform]['image_url']
+            if image_url is None:
+                image_url = song[platform]['image']
+            if image_url:
+                # 提取文件名
+                filename = os.path.basename(image_url)
+                # 构建完整路径
+                filepath = filename
+                # 下载图片
+                download_image(image_url, platform, filename)
+
+
     
     # 输出数据统计信息
     print("===== 数据统计结果 =====")
