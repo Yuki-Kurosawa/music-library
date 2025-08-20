@@ -12,42 +12,42 @@ namespace net_api.Helpers
             var doc = new HtmlDocument();
             doc.LoadHtml(html);
 
-            // Ñ¡È¡ËùÓĞÊÓÆµÌõÄ¿
+            // é€‰å–æ‰€æœ‰è§†é¢‘æ¡ç›®
             var nodes = doc.DocumentNode.SelectNodes("//li[contains(@class,'item') and @data-video-item]");
             if (nodes == null) return data;
 
             foreach (var node in nodes)
             {
-                // ±êÌâ
+                // æ ‡é¢˜
                 var titleNode = node.SelectSingleNode(".//p[contains(@class,'itemTitle')]/a");
                 string title = titleNode?.GetAttributeValue("title", "")?.Trim() ?? "";
 
-                // ÊÓÆµÁ´½Ó
+                // è§†é¢‘é“¾æ¥
                 string href = titleNode?.GetAttributeValue("href", "");
                 string fromUrl = string.IsNullOrEmpty(href) ? "" : $"https://www.nicovideo.jp{href}";
 
-                // ·âÃæÍ¼Æ¬
+                // å°é¢å›¾ç‰‡
                 var imgNode = node.SelectSingleNode(".//img[contains(@class,'thumb')]");
                 string imageUrl = imgNode?.GetAttributeValue("src", "") ?? "";
 
-                // ÒÕÊõ¼Ò£¨³¢ÊÔ´Ó±êÌâÖĞÌáÈ¡ [xxx] »ò ¡¾xxx¡¿ »ò - xxx ĞÎÊ½£©
+                // è‰ºæœ¯å®¶ï¼ˆå°è¯•ä»æ ‡é¢˜ä¸­æå– [xxx] æˆ– ã€xxxã€‘ æˆ– - xxx å½¢å¼ï¼‰
                 string artist = "";
-                var m = Regex.Match(title, @"[\[¡¾]([^\]¡¿]+)[\]¡¿]");
+                var m = Regex.Match(title, @"[\[ã€]([^\]ã€‘]+)[\]ã€‘]");
                 if (m.Success)
                     artist = m.Groups[1].Value;
                 else
                 {
-                    m = Regex.Match(title, @"- ([^-\[\]¡¾¡¿]+)$");
+                    m = Regex.Match(title, @"- ([^-\[\]ã€ã€‘]+)$");
                     if (m.Success)
                         artist = m.Groups[1].Value.Trim();
                 }
 
-                // ÈôÎ´ÌáÈ¡µ½ÒÕÊõ¼Ò£¬³¢ÊÔ´ÓÃèÊöÖĞÌáÈ¡
+                // è‹¥æœªæå–åˆ°è‰ºæœ¯å®¶ï¼Œå°è¯•ä»æè¿°ä¸­æå–
                 if (string.IsNullOrEmpty(artist))
                 {
                     var descNode = node.SelectSingleNode(".//p[contains(@class,'itemDescription')]");
                     string desc = descNode?.GetAttributeValue("title", "") ?? "";
-                    m = Regex.Match(desc, @"¸è³ª[:£º]([^\s\[]+)");
+                    m = Regex.Match(desc, @"æ­Œå”±[:ï¼š]([^\s\[]+)");
                     if (m.Success)
                         artist = m.Groups[1].Value.Trim();
                 }

@@ -8,10 +8,10 @@ namespace net_api.Helpers
     public class AmazonHTMLHelper
     {
         /// <summary>
-        /// ½âÎöAmazonËÑË÷½á¹ûHTML£¬ÌáÈ¡ÊÓÆµÏà¹ØÔªÊı¾İ
+        /// è§£æAmazonæœç´¢ç»“æœHTMLï¼Œæå–è§†é¢‘ç›¸å…³å…ƒæ•°æ®
         /// </summary>
-        /// <param name="html">AmazonËÑË÷½á¹ûÒ³ÃæHTML</param>
-        /// <returns>ÊÓÆµÔªÊı¾İÁĞ±í</returns>
+        /// <param name="html">Amazonæœç´¢ç»“æœé¡µé¢HTML</param>
+        /// <returns>è§†é¢‘å…ƒæ•°æ®åˆ—è¡¨</returns>
         public List<Metadata> Html2Metadata(string html)
         {
             var result = new List<Metadata>();
@@ -20,27 +20,27 @@ namespace net_api.Helpers
             var doc = new HtmlDocument();
             doc.LoadHtml(html);
 
-            // ²éÕÒËùÓĞËÑË÷½á¹ûÏî
+            // æŸ¥æ‰¾æ‰€æœ‰æœç´¢ç»“æœé¡¹
             var items = doc.DocumentNode.SelectNodes("//div[contains(@class, 's-result-item') and @data-asin and @data-asin!='']");
             if (items == null) return result;
 
             foreach (var item in items)
             {
-                // ±êÌâ
+                // æ ‡é¢˜
                 var titleNode = item.SelectSingleNode(".//h2//span");
                 var title = titleNode?.InnerText?.Trim() ?? "";
 
-                // ÏêÇéÒ³Á´½Ó
+                // è¯¦æƒ…é¡µé“¾æ¥
                 var urlNode = item.SelectSingleNode(".//a[@href]");
                 var url = urlNode?.GetAttributeValue("href", "");
                 if (!string.IsNullOrEmpty(url) && !url.StartsWith("http"))
                     url = "https://www.amazon.co.jp" + url;
 
-                // Í¼Æ¬
+                // å›¾ç‰‡
                 var imgNode = item.SelectSingleNode(".//img[contains(@class, 's-image')]");
                 var img = imgNode?.GetAttributeValue("src", "");
 
-                // ÒÕÊõ¼Ò/×÷Õß
+                // è‰ºæœ¯å®¶/ä½œè€…
                 var artistNode = item.SelectSingleNode(".//div[contains(@class, 'a-row')]/span[contains(@class, 'a-size-base')]");
                 var artist = artistNode?.InnerText?.Trim() ?? "";
 

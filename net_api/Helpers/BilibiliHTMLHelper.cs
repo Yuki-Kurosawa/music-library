@@ -8,10 +8,10 @@ namespace net_api.Helpers
     public class BilibiliHTMLHelper
     {
         /// <summary>
-        /// ½âÎöBÕ¾ËÑË÷½á¹ûHTML£¬ÌáÈ¡ÊÓÆµÏà¹ØÔªÊı¾İ
+        /// è§£æBç«™æœç´¢ç»“æœHTMLï¼Œæå–è§†é¢‘ç›¸å…³å…ƒæ•°æ®
         /// </summary>
-        /// <param name="html">BÕ¾ËÑË÷½á¹ûÒ³ÃæHTML</param>
-        /// <returns>ÊÓÆµÔªÊı¾İÁĞ±í</returns>
+        /// <param name="html">Bç«™æœç´¢ç»“æœé¡µé¢HTML</param>
+        /// <returns>è§†é¢‘å…ƒæ•°æ®åˆ—è¡¨</returns>
         public List<Metadata> Html2Metadata(string html)
         {
             var result = new List<Metadata>();
@@ -20,7 +20,7 @@ namespace net_api.Helpers
             var doc = new HtmlDocument();
             doc.LoadHtml(html);
 
-            // ²éÕÒËùÓĞÊÓÆµ¿¨Æ¬½Úµã
+            // æŸ¥æ‰¾æ‰€æœ‰è§†é¢‘å¡ç‰‡èŠ‚ç‚¹
             var cards = doc.DocumentNode.SelectNodes("//div[contains(@class, 'bili-video-card__wrap')]");
             if (cards == null) return result;
 
